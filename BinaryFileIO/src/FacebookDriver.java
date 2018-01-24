@@ -115,7 +115,9 @@ public class FacebookDriver {
 			}
 			case 3: {
 				try {
-					facebookObj.deleteUser(getStrInput("Enter username to delete"));
+					String usr = getStrInput("Enter username to delete");
+					facebookObj.deleteUser(usr);
+					System.out.println("\nDeleted " + usr + " from facebook");
 				} catch (Exception e) {
 					System.out.println(e.getMessage());
 				}

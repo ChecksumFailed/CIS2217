@@ -2,7 +2,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import javax.management.RuntimeErrorException;
+
 
 public class Facebook implements Serializable {
 	private static final long serialVersionUID = 7099795459621169470L;
@@ -26,7 +26,7 @@ public class Facebook implements Serializable {
 
 		FacebookUser tmpUser = searchUser(userName);
 		if (tmpUser == null) {
-			throw new RuntimeException("User does not exist");
+			throw new RuntimeException("Error: User " + userName + " does not exist");
 		}
 		this.users.remove(tmpUser);
 
@@ -55,7 +55,7 @@ public class Facebook implements Serializable {
 	String getPasswordHint(String userName) throws RuntimeException {
 		FacebookUser tmpUser = searchUser(userName);
 		if (tmpUser == null) {
-			throw new RuntimeException("User does not exist");
+			throw new RuntimeException("Error: User " + userName + " does not exist");
 		}
 		return tmpUser.getPasswordHelp();
 	}
