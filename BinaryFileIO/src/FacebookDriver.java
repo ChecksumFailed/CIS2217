@@ -1,9 +1,10 @@
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class FacebookDriver {
 
-	Facebook facebookObj = new Facebook();
+	static Facebook facebookObj = new Facebook();
 	static Scanner scannerObj = new Scanner(System.in); // Object for all user input
 
 	static int getInt(String msg) {
@@ -51,10 +52,9 @@ public class FacebookDriver {
 	}
 
 
-	static int displayMenu() {
+	static void displayMenu() {
 		// Display Menu
-		int userInput; // stores user choice
-		
+				
 		System.out.println("\nMenu");
 		System.out.println("1. List Users");
 		System.out.println("2. Add User");
@@ -62,14 +62,54 @@ public class FacebookDriver {
 		System.out.println("4. Get Password Hint");
 		System.out.println("5. Quit");
 		
-		userInput = getInt("Please select a choice between 1-5",1,5);
+		 
 
-		return userInput;
+
+	}
+	
+	static void printUsers(ArrayList<FacebookUser> users) {
+		for (FacebookUser i: users) {
+			System.out.println(i);
+		}
 	}
 
-	public static void main(String[] args) {
-		int choice = displayMenu();
-		System.out.println("CHoice: " + choice);
+	static String getStrInput(String msg) {
+		System.out.println(msg);
+		return scannerObj.nextLine();
+		
+	}
+
+	static void addUser() {
+		String userName = getStrInput("Enter Username to add");
+		
+		if (facebookObj.searchUser(userName) != null) {
+			System.out.println("Error: User already exists");
+			return;
+		}
+		
+		String password = getStrInput("Enter password for new user");
+		String passwordHint = getStrInput("Enter password hint for new user");
+		
+		facebookObj.addUser(userName, password, passwordHint);
+		
+	}
+	
+	public static void main(String[] args) throws CloneNotSupportedException {
+		int usrChoice = 0;
+		
+		do {
+			displayMenu();
+			usrChoice = getInt("Please select a choice between 1-5",1,5);
+			switch (usrChoice) {
+			case 1: printUsers(facebookObj.listUsers());
+					break;
+			case 2: {
+					addUser();
+					break;
+				}
+			}
+		} while (usrChoice != 5);
+		
 		
 		scannerObj.close();
 		System.out.println("Buh bye");
