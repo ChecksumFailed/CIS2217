@@ -73,7 +73,7 @@ abstract public class UserAccount {
 		return true;
 	}
 
-	public abstract void getPasswordHelp();
+	public abstract String getPasswordHelp();
 	
 	
 }
