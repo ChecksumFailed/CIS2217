@@ -25,6 +25,9 @@ public class Facebook implements Serializable {
 	void deleteUser(String userName) throws RuntimeException {
 
 		FacebookUser tmpUser = searchUser(userName);
+		if (tmpUser == null) {
+			throw new RuntimeException("User does not exist");
+		}
 		this.users.remove(tmpUser);
 
 	}

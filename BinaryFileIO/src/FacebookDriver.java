@@ -63,6 +63,7 @@ public class FacebookDriver {
 	}
 
 	static void printUsers(ArrayList<FacebookUser> users) {
+		System.out.println("\nUsers:");
 		for (FacebookUser i : users) {
 			System.out.println(i);
 		}
