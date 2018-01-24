@@ -53,8 +53,8 @@ public class FacebookUser extends UserAccount implements Comparable<FacebookUser
 
 	// Returns users password hint
 	@Override
-	public void getPasswordHelp() {
-		System.out.println(this.passwordHint);
+	public String getPasswordHelp() {
+		return this.passwordHint;
 		
 	}
 
