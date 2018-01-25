@@ -1,3 +1,8 @@
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -7,6 +12,8 @@ public class FacebookDriver {
 	static Facebook facebookObj = new Facebook();
 	static Scanner scannerObj = new Scanner(System.in); // Object for all user input
 
+	// Function to retrieve integer input. Peforms input validation to only allow
+	// int
 	static int getInt(String msg) {
 		boolean isInt = false;
 		int tmpInt = 0;
@@ -25,6 +32,8 @@ public class FacebookDriver {
 
 	}
 
+	// Function to retrieve integer input. Peforms input validation to only allow
+	// int. Will also check against range
 	static int getInt(String msg, int lower, int upper) {
 		boolean isInt = false;
 		int tmpInt = 0;
@@ -42,7 +51,7 @@ public class FacebookDriver {
 				System.out.println("Please Enter integers Only");
 				scannerObj.next();
 			} finally {
-				scannerObj.nextLine(); //consume newline
+				scannerObj.nextLine(); // consume newline
 			}
 
 		}
@@ -50,6 +59,7 @@ public class FacebookDriver {
 
 	}
 
+	//Displays basic menu for user input
 	static void displayMenu() {
 		// Display Menu
 
@@ -62,6 +72,7 @@ public class FacebookDriver {
 
 	}
 
+	//Prints list of facebook users
 	static void printUsers(ArrayList<FacebookUser> users) {
 		System.out.println("\nUsers:");
 		for (FacebookUser i : users) {
@@ -69,18 +80,20 @@ public class FacebookDriver {
 		}
 	}
 
+	//Retrieves string input from user
 	static String getStrInput(String msg) {
-		
+
 		System.out.println(msg);
-		
+
 		return scannerObj.nextLine();
-	
 
 	}
 
+	//Adds user to facebook.
 	static void addUser() {
 		String userName = getStrInput("Enter Username to add");
 
+		//Perform a search for user before asking for more info
 		if (facebookObj.searchUser(userName) != null) {
 			System.out.println("Error: User already exists");
 			return;
@@ -92,20 +105,46 @@ public class FacebookDriver {
 		facebookObj.addUser(userName, password, passwordHint);
 
 	}
-	
-	
 
+	//Write facebook object to file
+	static void writeDB() throws IOException {
+		try (ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("facebook.dat", false));) {
+
+			output.writeObject(facebookObj);
+		}
+	}
+
+	//Read facebook object from file
+	static void readDB() throws IOException, ClassNotFoundException {
+		try (ObjectInputStream input = new ObjectInputStream(new FileInputStream("facebook.dat"));) {
+
+			facebookObj = (Facebook) input.readObject();
+
+		}
+	}
+
+	//Main function of driver
 	public static void main(String[] args) throws CloneNotSupportedException {
 		int usrChoice = 0;
+		
+		//Load Facebook Object
+		try {
+			readDB();
+		} catch (ClassNotFoundException e1) {
+			System.out.print(e1.getMessage());
+		} catch (IOException e1) {
+			facebookObj = new Facebook(); //Set to new blank object if no file exists
+		}
 
+		//Loop until users decides to quit
 		do {
 			displayMenu();
 			usrChoice = getInt("Please select a choice between 1-5", 1, 5);
 			switch (usrChoice) {
-			case 1:
+			case 1: //Print all facebook users
 				printUsers(facebookObj.listUsers());
 				break;
-			case 2: {
+			case 2: {//Add new user to facebook
 				try {
 					addUser();
 				} catch (Exception e) {
@@ -113,7 +152,7 @@ public class FacebookDriver {
 				}
 				break;
 			}
-			case 3: {
+			case 3: { //delete user from facebook
 				try {
 					String usr = getStrInput("Enter username to delete");
 					facebookObj.deleteUser(usr);
@@ -123,20 +162,28 @@ public class FacebookDriver {
 				}
 				break;
 			}
-			case 4: {
+			case 4: { //Retrieve users password hint
 				try {
-				System.out.println(facebookObj.getPasswordHint(getStrInput("Enter username")));
-				}
-				catch (RuntimeException ex) {
+					System.out.println("Password Hint: " + facebookObj.getPasswordHint(getStrInput("Enter username")));
+				} catch (RuntimeException ex) {
 					System.out.println(ex.getMessage());
 				}
 				break;
-				
+
 			}
 			}
 		} while (usrChoice != 5);
 
-		scannerObj.close();
+		scannerObj.close(); //Close scanner
+		
+		//Save changes to disk
+		System.out.println("Writing Facebook database to disk");
+		try {
+			writeDB();
+		} catch (IOException e) {
+
+			System.out.println(e.getMessage());
+		}
 		System.out.println("Buh bye");
 	}
 
