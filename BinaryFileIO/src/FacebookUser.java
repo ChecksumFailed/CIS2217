@@ -4,11 +4,16 @@
  * Description: Extends UserAccount class.  Implements abstract classes, comparable interface and deep copy clone methods
  */
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EmptyStackException;
 
-public class FacebookUser extends UserAccount implements Comparable<FacebookUser> {
+public class FacebookUser extends UserAccount implements Comparable<FacebookUser>, Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	String passwordHint;
 	ArrayList<FacebookUser> friends = new ArrayList<FacebookUser>();
 
@@ -17,6 +22,8 @@ public class FacebookUser extends UserAccount implements Comparable<FacebookUser
 		super(username, password);
 
 	}
+	
+	FacebookUser() {}
 
 	// Sets Users password hint
 	void setPasswordHint(String hint) {

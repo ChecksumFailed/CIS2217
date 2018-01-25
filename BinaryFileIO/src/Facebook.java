@@ -6,8 +6,9 @@ import java.util.Collections;
 
 public class Facebook implements Serializable {
 	private static final long serialVersionUID = 7099795459621169470L;
-	private ArrayList<FacebookUser> users = new ArrayList<FacebookUser>();
+	private ArrayList<FacebookUser> users = new ArrayList<FacebookUser>(); //Arraylist to hold all users
 
+	//Constructor
 	public Facebook() {
 
 	}
@@ -32,10 +33,11 @@ public class Facebook implements Serializable {
 
 	}
 
+	//Search for user.  Return null if not found
 	FacebookUser searchUser(String userName)  {
 
 		for (FacebookUser i : this.users) {
-			if (i.toString().equals(userName))
+			if (i.toString().equalsIgnoreCase(userName))
 				return i;
 		}
 		return null;
@@ -52,6 +54,7 @@ public class Facebook implements Serializable {
 
 	}
 	
+	//returns password hint of user
 	String getPasswordHint(String userName) throws RuntimeException {
 		FacebookUser tmpUser = searchUser(userName);
 		if (tmpUser == null) {

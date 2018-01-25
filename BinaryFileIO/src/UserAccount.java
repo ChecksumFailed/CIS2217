@@ -1,10 +1,12 @@
+import java.io.Serializable;
+
 /*Author: Ben Scherer
  * Class: CIS.2217.800
  * Class: UserAccount
  * Description: Base UserAccount class.  Used as a bad to build user classes for other programs.  Utilizes abstract classes for easy development of new classes.
  */
 
-abstract public class UserAccount {
+abstract public class UserAccount implements Serializable{
 	// Variables
 	private String username; //Username
 	private String password; //Password
@@ -17,6 +19,8 @@ abstract public class UserAccount {
 		this.active = true;;
 	}
 
+	UserAccount() {}
+	
 	//Checks argument against account password
 	public boolean checkPassword(String password) {
 		if (this.password.equals(password))
