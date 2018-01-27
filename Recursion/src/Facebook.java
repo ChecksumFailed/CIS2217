@@ -62,5 +62,17 @@ public class Facebook implements Serializable {
 		}
 		return tmpUser.getPasswordHelp();
 	}
+	
+	void friend(String userName) throws RuntimeException{
+		
+	}
+	
+	void deFriend(String userName) throws RuntimeException{
+		
+	}
+	
+	void listFriends(String userName) throws RuntimeException{
+		
+	}
 
 }
