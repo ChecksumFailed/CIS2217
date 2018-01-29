@@ -4,11 +4,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class FacebookDriver {
-
+	static boolean debug = true;
 	static Facebook facebookObj = new Facebook();
 	static Scanner scannerObj = new Scanner(System.in); // Object for all user input
 
@@ -71,7 +72,8 @@ public class FacebookDriver {
 		System.out.println("5. Friend someone");
 		System.out.println("6. Defriend someone");
 		System.out.println("7. List Friends");
-		System.out.println("8. Quit");
+		System.out.println("8. Recommend Friends");
+		System.out.println("9. Quit");
 
 	}
 
@@ -125,8 +127,8 @@ public class FacebookDriver {
 
 		}
 	}
-	
-	//Print out list of friends	
+
+	// Print out list of friends
 	static void printFriends() {
 		String userName = getStrInput("Enter username");
 		ArrayList<FacebookUser> tmpList;
@@ -136,15 +138,13 @@ public class FacebookDriver {
 				System.out.println("No friends in friends list");
 				return;
 			}
-				
-			for (FacebookUser i: tmpList) {
+
+			for (FacebookUser i : tmpList) {
 				System.out.println(i);
 			}
 		} catch (RuntimeException | CloneNotSupportedException e) {
 			System.out.println(e.getMessage());
 		}
-		
-		
 
 	}
 
@@ -207,10 +207,12 @@ public class FacebookDriver {
 				break;
 			}
 			case 7: {
-				
+				printFriends();
 				break;
 			}
 			case 8: {
+				getRecommendedFriends();
+
 				break;
 			}
 			}
@@ -240,6 +242,20 @@ public class FacebookDriver {
 
 	}
 
+	static void getRecommendedFriends() {
+		ArrayList<FacebookUser> friends = facebookObj.recommendFriends(getStrInput("Enter Username"));
+		if (friends.size() == 0)
+			System.out.println("No friends to recommend");
+		else {
+			System.out.println("Recommended friends based on your friend's friends lists");
+			System.out.println("---------------------------------------------------------");
+			for (FacebookUser i : friends) {
+				System.out.println(i);
+			}
+		}
+
+	}
+
 	// Main function of driver
 	public static void main(String[] args) throws CloneNotSupportedException {
 
@@ -251,7 +267,20 @@ public class FacebookDriver {
 		} catch (IOException e1) {
 			facebookObj = new Facebook(); // Set to new blank object if no file exists
 		}
-
+		
+		//Generate random user data if debug is enabled
+		if (debug) {
+			// Create user accounts and sort
+			int numUsers = 10;
+			System.out.println("Creating " + numUsers + " facebook user accounts");
+			facebookObj.genUsers(numUsers); // List of user accounts created by driver
+			
+			// Create friends lists for all the users. Randomized
+			System.out.println("Generating random friends lists for users");
+			facebookObj.addRandomFriends();
+		}
+		
+		
 		runFacebook(); // Show menu and manage user input
 
 		scannerObj.close(); // Close scanner
