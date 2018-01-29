@@ -63,15 +63,22 @@ public class Facebook implements Serializable {
 		return tmpUser.getPasswordHelp();
 	}
 	
-	void friend(String userName) throws RuntimeException{
+	void friend(FacebookUser usrObj,FacebookUser usrToAdd) throws RuntimeException{
+		usrObj.friend(usrToAdd);
+
 		
 	}
 	
-	void deFriend(String userName) throws RuntimeException{
-		
+	void deFriend(FacebookUser usrObj,FacebookUser usrToRemove) throws RuntimeException{
+		usrObj.defriend(usrToRemove);
 	}
 	
-	void listFriends(String userName) throws RuntimeException{
+	ArrayList<FacebookUser> getFriends(String userName) throws RuntimeException, CloneNotSupportedException{
+		FacebookUser tmpUser = searchUser(userName);
+		if (tmpUser == null) 
+			throw new RuntimeException("Error: User " + userName + " does not exist");
+		return tmpUser.getFriends();
+		
 		
 	}
 
