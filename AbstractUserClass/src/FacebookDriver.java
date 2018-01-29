@@ -126,7 +126,7 @@ public class FacebookDriver {
         ArrayList<FacebookUser> facebookUsers = genUsers(numUsers); // List of user accounts created by driver
         System.out.println("Sorting list....");
         Collections.sort(facebookUsers);
-
+        System.out.println("Size: " + facebookUsers.size());
 
         //Create friends lists for all the users.  Randomized
         System.out.println("Generating random friends lists for users");
