@@ -34,7 +34,7 @@ public class Facebook implements Serializable {
 	}
 
 	// Search for user. Return null if not found
-	FacebookUser searchUser(String userName) {
+	private FacebookUser searchUser(String userName) {
 
 		for (FacebookUser i : this.users) {
 			if (i.toString().equalsIgnoreCase(userName))
@@ -63,13 +63,37 @@ public class Facebook implements Serializable {
 		return tmpUser.getPasswordHelp();
 	}
 
-	void friend(FacebookUser usrObj, FacebookUser usrToAdd) throws RuntimeException {
-		usrObj.friend(usrToAdd);
+	//Add user to friends list
+	void friend(String userName, String usrFriend) throws RuntimeException {
+		FacebookUser baseUser = searchUser(userName);
+		if (baseUser == null) {
+			throw new RuntimeException("Error: User " + userName + " does not exist");
+		}
+		
+		FacebookUser friendUser = searchUser(usrFriend);
+		if (friendUser == null) {
+			throw new RuntimeException("Error: User " + userName + " does not exist");
+		}
+		
+		
+		baseUser.friend(friendUser);
 
 	}
 
-	void deFriend(FacebookUser usrObj, FacebookUser usrToRemove) throws RuntimeException {
-		usrObj.defriend(usrToRemove);
+	//Defriend user
+	void deFriend(String userName, String usrFriend) throws RuntimeException {
+		FacebookUser baseUser = searchUser(userName);
+		if (baseUser == null) {
+			throw new RuntimeException("Error: User " + userName + " does not exist");
+		}
+		
+		FacebookUser friendUser = searchUser(usrFriend);
+		if (friendUser == null) {
+			throw new RuntimeException("Error: User " + userName + " does not exist");
+		}
+		
+		
+		baseUser.friend(friendUser);
 	}
 
 	ArrayList<FacebookUser> getFriends(String userName) throws RuntimeException, CloneNotSupportedException {
@@ -84,12 +108,13 @@ public class Facebook implements Serializable {
 		FacebookUser tmpUser = searchUser(userName);
 		if (tmpUser == null)
 			throw new RuntimeException("Error: User " + userName + " does not exist");
-
-		return recurseFriends(tmpUser, tmpUser.friends, tmpUser.friends.size() - 1);
+		ArrayList<FacebookUser> listToReturn = new ArrayList<FacebookUser>();
+		listToReturn = recurseFriends(tmpUser, tmpUser.friends, listToReturn, tmpUser.friends.size() - 1);
+		return listToReturn;
 
 	}
 
-	ArrayList<FacebookUser> recurseFriends(FacebookUser baseUser, ArrayList<FacebookUser> list, int index) {
+	ArrayList<FacebookUser> recurseFriends(FacebookUser baseUser, ArrayList<FacebookUser> curFriends,ArrayList<FacebookUser> list, int index) {
 		FacebookUser tmpUser = list.get(index);
 
 		// Skip if user object is same as tmpUser, just in case list gets passed this
@@ -97,28 +122,19 @@ public class Facebook implements Serializable {
 		if (tmpUser == baseUser && index == 0)
 			return list;
 		else if (tmpUser == baseUser)
-			recurseFriends(baseUser, list, --index);
+			recurseFriends(baseUser, curFriends,list, --index);
 
 		for (FacebookUser i : list.get(index).friends) {
-			if (!list.contains(i))
+			if (!list.contains(i) && !curFriends.contains(i))
 				list.add(i);
 		}
 		if (index == 0)
 			return list;
 		else
-			return recurseFriends(baseUser, list, --index);
+			return recurseFriends(baseUser, curFriends,list, --index);
 	}
 
-	// Search arraylist for existing user.
-	static FacebookUser searchUser(ArrayList<FacebookUser> listToSearch, String strToSearch) {
-		for (FacebookUser usr : listToSearch) {
-			if (usr.getUsername().equalsIgnoreCase(strToSearch))
-				return usr;
-		}
 
-		return null;
-
-	}
 
 	// Generate facebook users for testing. Uses US Census data and SSA for names
 	void genUsers(int numUsers) {
