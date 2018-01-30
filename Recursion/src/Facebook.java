@@ -127,7 +127,7 @@ public class Facebook implements Serializable {
 			recurseFriends(baseUser, curFriends,list, --index);
 
 		for (FacebookUser i : curFriends.get(index).friends) {
-			if (!list.contains(i) && !curFriends.contains(i))
+			if (!list.contains(i) && !curFriends.contains(i) && baseUser != i)
 				list.add(i);
 		}
 		if (index == 0)
@@ -156,7 +156,8 @@ public class Facebook implements Serializable {
 				"Aubrey" };
 		Random rand = new Random();
 		String userName;
-
+		ArrayList<FacebookUser> tmpList = new ArrayList<FacebookUser>();
+		
 		// create users and build list
 		for (int i = 1; i <= numUsers; i++) {
 			do {
@@ -169,13 +170,20 @@ public class Facebook implements Serializable {
 			// tmpUsr.getPasswordHelp();
 
 			this.users.add(tmpUsr);
+			tmpList.add(tmpUsr);
 		}
+		
+		for (FacebookUser i: tmpList) {
+			addRandomFriends(i);
+		}
+		
 
 	}
 
 	// Generate random friend lists
 	void addRandomFriends(FacebookUser usrObj) {
 		Random rand = new Random();
+		
 		if (this.users.size() == 1) {
 			System.out.println("Error:  List must contain other users to add to friends list");
 			return;
