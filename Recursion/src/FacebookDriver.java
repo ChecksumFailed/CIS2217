@@ -9,7 +9,7 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class FacebookDriver {
-	static boolean debug = false;
+	static boolean debug = true;
 	static Facebook facebookObj = new Facebook();
 	static Scanner scannerObj = new Scanner(System.in); // Object for all user input
 
@@ -84,7 +84,7 @@ public class FacebookDriver {
 		}
 		return null;
 	}
-	
+
 	// Prints list of facebook users
 	static void printUsers(ArrayList<FacebookUser> users) {
 		System.out.println("\nUsers:");
@@ -107,16 +107,16 @@ public class FacebookDriver {
 		String userName = getStrInput("Enter Username to add");
 
 		// Perform a search for user before asking for more info
-		if (searchUsers(userName) != null ) {
+		if (searchUsers(userName) != null) {
 			System.out.println("Error: User already exists");
 			return;
 		}
 
 		String password = getStrInput("Enter password for new user");
 		String passwordHint = getStrInput("Enter password hint for new user");
-		
+
 		try {
-		facebookObj.addUser(userName, password, passwordHint);
+			facebookObj.addUser(userName, password, passwordHint);
 		} catch (RuntimeException e) {
 			System.out.println(e.getMessage());
 		}
@@ -237,13 +237,11 @@ public class FacebookDriver {
 		FacebookUser usrObj = searchUsers(userName);
 		if (usrObj == null)
 			throw new RuntimeException("ERROR: " + userName + " does not exist in facebook database");
-		
+
 		String userPassword = getStrInput("Enter password");
 		if (!usrObj.checkPassword(userPassword))
 			throw new RuntimeException("ERROR: " + "incorrect password entered");
-		
-		
-		
+
 		switch (action) {
 		case 1: {
 			userName = getStrInput("Enter username to add friends list");
@@ -266,15 +264,21 @@ public class FacebookDriver {
 	}
 
 	static void getRecommendedFriends() {
-		ArrayList<FacebookUser> friends = facebookObj.recommendFriends(getStrInput("Enter Username"));
-		if (friends.size() == 0)
-			System.out.println("No friends to recommend");
-		else {
-			System.out.println("Recommended friends based on your friend's friends lists");
-			System.out.println("---------------------------------------------------------");
-			for (FacebookUser i : friends) {
-				System.out.println(i);
+		try {
+			ArrayList<FacebookUser> friends = facebookObj.recommendFriends(getStrInput("Enter Username"));
+
+			if (friends.size() == 0)
+				System.out.println("No friends to recommend");
+			else {
+				System.out.println("Recommended friends based on your friend's friends lists");
+				System.out.println("---------------------------------------------------------");
+				for (FacebookUser i : friends) {
+					System.out.println(i);
+				}
 			}
+		} catch (RuntimeException e) {
+			System.out.println("Error: " + e.getMessage());
+			return;
 		}
 
 	}
@@ -290,20 +294,19 @@ public class FacebookDriver {
 		} catch (IOException e1) {
 			facebookObj = new Facebook(); // Set to new blank object if no file exists
 		}
-		
-		//Generate random user data if debug is enabled
+
+		// Generate random user data if debug is enabled
 		if (debug) {
 			// Create user accounts and sort
 			int numUsers = 10;
 			System.out.println("Creating " + numUsers + " facebook user accounts");
 			facebookObj.genUsers(numUsers); // List of user accounts created by driver
-			
+
 			// Create friends lists for all the users. Randomized
 			System.out.println("Generating random friends lists for users");
 			facebookObj.addRandomFriends();
 		}
-		
-		
+
 		runFacebook(); // Show menu and manage user input
 
 		scannerObj.close(); // Close scanner
