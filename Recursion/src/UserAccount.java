@@ -7,6 +7,10 @@ import java.io.Serializable;
  */
 
 abstract public class UserAccount implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8611266401890159805L;
 	// Variables
 	private String username; //Username
 	private String password; //Password
