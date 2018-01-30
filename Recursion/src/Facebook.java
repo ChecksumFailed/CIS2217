@@ -93,7 +93,7 @@ public class Facebook implements Serializable {
 		}
 		
 		
-		baseUser.friend(friendUser);
+		baseUser.defriend(friendUser);
 	}
 
 	ArrayList<FacebookUser> getFriends(String userName) throws RuntimeException, CloneNotSupportedException {
@@ -108,6 +108,7 @@ public class Facebook implements Serializable {
 		FacebookUser tmpUser = searchUser(userName);
 		if (tmpUser == null)
 			throw new RuntimeException("Error: User " + userName + " does not exist");
+	
 		ArrayList<FacebookUser> listToReturn = new ArrayList<FacebookUser>();
 		listToReturn = recurseFriends(tmpUser, tmpUser.friends, listToReturn, tmpUser.friends.size() - 1);
 		return listToReturn;
@@ -115,16 +116,17 @@ public class Facebook implements Serializable {
 	}
 
 	ArrayList<FacebookUser> recurseFriends(FacebookUser baseUser, ArrayList<FacebookUser> curFriends,ArrayList<FacebookUser> list, int index) {
-		FacebookUser tmpUser = list.get(index);
+		FacebookUser tmpUser = curFriends.get(index);
 
 		// Skip if user object is same as tmpUser, just in case list gets passed this
 		// way
+		//System.out.println("Index: " + index);
 		if (tmpUser == baseUser && index == 0)
 			return list;
 		else if (tmpUser == baseUser)
 			recurseFriends(baseUser, curFriends,list, --index);
 
-		for (FacebookUser i : list.get(index).friends) {
+		for (FacebookUser i : curFriends.get(index).friends) {
 			if (!list.contains(i) && !curFriends.contains(i))
 				list.add(i);
 		}
@@ -201,12 +203,13 @@ public class Facebook implements Serializable {
 			System.out.println("Error:  List must contain other users to add to friends list");
 			return;
 		}
-		int numFriends = rand.nextInt(this.users.size() - 1); // Random number of friends. Reduce by one to exclude self
+		
 		int numAvailable = this.users.size(); // Total number for user accounts available
 		FacebookUser tmpUser; // user object to add to friends list
 
 		for (FacebookUser usrObj : this.users) {
-
+			
+			int numFriends = rand.nextInt(this.users.size() - 1); // Random number of friends. Reduce by one to exclude self
 			for (int i = 0; i <= numFriends; i++) {
 				do {
 					tmpUser = this.users.get(rand.nextInt(numAvailable));
