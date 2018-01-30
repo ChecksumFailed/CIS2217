@@ -9,7 +9,7 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class FacebookDriver {
-	static boolean debug = true;
+	static boolean debug = false;
 	static Facebook facebookObj = new Facebook();
 	static Scanner scannerObj = new Scanner(System.in); // Object for all user input
 
@@ -302,9 +302,6 @@ public class FacebookDriver {
 			System.out.println("Creating " + numUsers + " facebook user accounts");
 			facebookObj.genUsers(numUsers); // List of user accounts created by driver
 
-			// Create friends lists for all the users. Randomized
-			System.out.println("Generating random friends lists for users");
-			facebookObj.addRandomFriends();
 		}
 
 		runFacebook(); // Show menu and manage user input
