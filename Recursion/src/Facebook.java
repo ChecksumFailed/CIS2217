@@ -93,7 +93,7 @@ public class Facebook implements Serializable {
 		}
 		
 		
-		baseUser.friend(friendUser);
+		baseUser.defriend(friendUser);
 	}
 
 	ArrayList<FacebookUser> getFriends(String userName) throws RuntimeException, CloneNotSupportedException {
@@ -108,18 +108,20 @@ public class Facebook implements Serializable {
 		FacebookUser tmpUser = searchUser(userName);
 		if (tmpUser == null)
 			throw new RuntimeException("Error: User " + userName + " does not exist");
-		//System.out.println(tmpUser.friends.size());
+
 		ArrayList<FacebookUser> listToReturn = new ArrayList<FacebookUser>();
 		listToReturn = recurseFriends(tmpUser, tmpUser.friends, listToReturn, tmpUser);
 		return listToReturn;
 
 	}
 
+
 	
 	ArrayList<FacebookUser> recurseFriends(FacebookUser baseUser, ArrayList<FacebookUser> curFriends,ArrayList<FacebookUser> list, FacebookUser tmpUser) {
-		
+
 		for (FacebookUser i : tmpUser.friends) {
-			if (!list.contains(i) && !curFriends.contains(i) )
+			if (!list.contains(i) && !curFriends.contains(i) && baseUser != i)
+
 				list.add(i);
 				recurseFriends(baseUser, curFriends,list, i);
 		}
@@ -147,7 +149,8 @@ public class Facebook implements Serializable {
 				"Aubrey" };
 		Random rand = new Random();
 		String userName;
-
+		ArrayList<FacebookUser> tmpList = new ArrayList<FacebookUser>();
+		
 		// create users and build list
 		for (int i = 1; i <= numUsers; i++) {
 			do {
@@ -160,13 +163,20 @@ public class Facebook implements Serializable {
 			// tmpUsr.getPasswordHelp();
 
 			this.users.add(tmpUsr);
+			tmpList.add(tmpUsr);
 		}
+		
+		for (FacebookUser i: tmpList) {
+			addRandomFriends(i);
+		}
+		
 
 	}
 
 	// Generate random friend lists
 	void addRandomFriends(FacebookUser usrObj) {
 		Random rand = new Random();
+		
 		if (this.users.size() == 1) {
 			System.out.println("Error:  List must contain other users to add to friends list");
 			return;
@@ -194,12 +204,13 @@ public class Facebook implements Serializable {
 			System.out.println("Error:  List must contain other users to add to friends list");
 			return;
 		}
-		int numFriends = rand.nextInt(this.users.size() - 1); // Random number of friends. Reduce by one to exclude self
+		
 		int numAvailable = this.users.size(); // Total number for user accounts available
 		FacebookUser tmpUser; // user object to add to friends list
 
 		for (FacebookUser usrObj : this.users) {
-
+			
+			int numFriends = rand.nextInt(this.users.size() - 1); // Random number of friends. Reduce by one to exclude self
 			for (int i = 0; i <= numFriends; i++) {
 				do {
 					tmpUser = this.users.get(rand.nextInt(numAvailable));
