@@ -108,8 +108,9 @@ public class Facebook implements Serializable {
 		FacebookUser tmpUser = searchUser(userName);
 		if (tmpUser == null)
 			throw new RuntimeException("Error: User " + userName + " does not exist");
+		//System.out.println(tmpUser.friends.size());
 		ArrayList<FacebookUser> listToReturn = new ArrayList<FacebookUser>();
-		listToReturn = recurseFriends(tmpUser, tmpUser.friends, listToReturn, tmpUser.friends.size() - 1);
+		listToReturn = recurseFriends(tmpUser, tmpUser.friends, listToReturn, tmpUser);
 		return listToReturn;
 
 	}
@@ -132,6 +133,17 @@ public class Facebook implements Serializable {
 			return list;
 		else
 			return recurseFriends(baseUser, curFriends,list, --index);
+	}
+	
+	ArrayList<FacebookUser> recurseFriends(FacebookUser baseUser, ArrayList<FacebookUser> curFriends,ArrayList<FacebookUser> list, FacebookUser tmpUser) {
+		
+		for (FacebookUser i : tmpUser.friends) {
+			if (!list.contains(i) && !curFriends.contains(i) )
+				list.add(i);
+				recurseFriends(baseUser, curFriends,list, i);
+		}
+
+		return list;
 	}
 
 
