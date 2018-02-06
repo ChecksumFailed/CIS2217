@@ -115,25 +115,6 @@ public class Facebook implements Serializable {
 
 	}
 
-	ArrayList<FacebookUser> recurseFriends(FacebookUser baseUser, ArrayList<FacebookUser> curFriends,ArrayList<FacebookUser> list, int index) {
-		FacebookUser tmpUser = list.get(index);
-
-		// Skip if user object is same as tmpUser, just in case list gets passed this
-		// way
-		if (tmpUser == baseUser && index == 0)
-			return list;
-		else if (tmpUser == baseUser)
-			recurseFriends(baseUser, curFriends,list, --index);
-
-		for (FacebookUser i : list.get(index).friends) {
-			if (!list.contains(i) && !curFriends.contains(i))
-				list.add(i);
-		}
-		if (index == 0)
-			return list;
-		else
-			return recurseFriends(baseUser, curFriends,list, --index);
-	}
 	
 	ArrayList<FacebookUser> recurseFriends(FacebookUser baseUser, ArrayList<FacebookUser> curFriends,ArrayList<FacebookUser> list, FacebookUser tmpUser) {
 		
