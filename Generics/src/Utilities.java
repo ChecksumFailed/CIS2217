@@ -1,14 +1,15 @@
 import java.util.ArrayList;
+import java.util.Collections;
 
-public class Utilities<E> {
+public class Utilities<E extends Comparable<E>> {
 	
-	private ArrayList<E> list = new ArrayList<>();
+	private ArrayList<E> items = new ArrayList<>();
 	
 	// The name of the constructor is still the name of the class -- without
 	// the parameterization
 	
 	public Utilities() {
-		this.list = new ArrayList<>();
+		
 	}
 	
 	public static <E> ArrayList<E> removeDuplicates(ArrayList<E> list) {
@@ -29,6 +30,16 @@ public class Utilities<E> {
 	int linearSearch(E[] list, E key) {
 		return 0;
 		
+	}
+	
+	public void add(E newItem) {
+		items.add(newItem);
+		Collections.sort(items);
+	}
+
+	
+	public void remove(E removeItem) {
+		items.remove(removeItem);
 	}
 	
 }
