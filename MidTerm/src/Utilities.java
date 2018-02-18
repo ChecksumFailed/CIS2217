@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import javax.swing.JOptionPane;
 
 import javax.swing.JFileChooser;
 
@@ -38,5 +39,11 @@ public class Utilities<E extends Comparable<E>> {
 	int linearSearch(E[] list, E key) {
 		return 0;
 		
+	}
+	
+	//Message PopUp
+	public static void showMessage(String msg, String title) {
+		JOptionPane.showMessageDialog(null, msg, title, JOptionPane.INFORMATION_MESSAGE);
+		 
 	}
 }
