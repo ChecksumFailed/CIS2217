@@ -29,6 +29,11 @@ public  class TwitterUser implements Comparable<TwitterUser>{
 		this.userID = userID;
 	}
 
+	//Return the number of users followed
+	int getFollowedCount() {
+		return this.usersFollowed.size();
+	}
+	
 	//Compare by UserID
 	@Override
 	public int compareTo(TwitterUser usrToCompare) {
