@@ -63,36 +63,34 @@ public class Facebook implements Serializable {
 		return tmpUser.getPasswordHelp();
 	}
 
-	//Add user to friends list
+	// Add user to friends list
 	void friend(String userName, String usrFriend) throws RuntimeException {
 		FacebookUser baseUser = searchUser(userName);
 		if (baseUser == null) {
 			throw new RuntimeException("Error: User " + userName + " does not exist");
 		}
-		
+
 		FacebookUser friendUser = searchUser(usrFriend);
 		if (friendUser == null) {
 			throw new RuntimeException("Error: User " + userName + " does not exist");
 		}
-		
-		
+
 		baseUser.friend(friendUser);
 
 	}
 
-	//Defriend user
+	// Defriend user
 	void deFriend(String userName, String usrFriend) throws RuntimeException {
 		FacebookUser baseUser = searchUser(userName);
 		if (baseUser == null) {
 			throw new RuntimeException("Error: User " + userName + " does not exist");
 		}
-		
+
 		FacebookUser friendUser = searchUser(usrFriend);
 		if (friendUser == null) {
 			throw new RuntimeException("Error: User " + userName + " does not exist");
 		}
-		
-		
+
 		baseUser.friend(friendUser);
 	}
 
@@ -108,38 +106,36 @@ public class Facebook implements Serializable {
 		FacebookUser tmpUser = searchUser(userName);
 		if (tmpUser == null)
 			throw new RuntimeException("Error: User " + userName + " does not exist");
-		//System.out.println(tmpUser.friends.size());
+		// System.out.println(tmpUser.friends.size());
 		ArrayList<FacebookUser> listToReturn = new ArrayList<FacebookUser>();
 		ArrayList<FacebookUser> processedUsers = new ArrayList<FacebookUser>();
-		//listToReturn = recurseFriends(tmpUser, tmpUser.friends, listToReturn, tmpUser);
-		listToReturn = recurseFriends(tmpUser,listToReturn,processedUsers,tmpUser);
+		// listToReturn = recurseFriends(tmpUser, tmpUser.friends, listToReturn,
+		// tmpUser);
+		listToReturn = recurseFriends(tmpUser, listToReturn, processedUsers, tmpUser);
 		return listToReturn;
 
 	}
 
-	ArrayList<FacebookUser> recurseFriends(FacebookUser baseUser,ArrayList<FacebookUser> listToReturn,ArrayList<FacebookUser> processedUsers, FacebookUser tmpUser) {
-	
+	ArrayList<FacebookUser> recurseFriends(FacebookUser baseUser, ArrayList<FacebookUser> listToReturn,
+			ArrayList<FacebookUser> processedUsers, FacebookUser tmpUser) {
+
 		if (processedUsers.contains(tmpUser))
 			return listToReturn;
 		processedUsers.add(tmpUser);
-		
-		for (FacebookUser i: tmpUser.friends) {
-			//Add to list if it does not already exist and is not the initial user we are making recommendation for
+
+		for (FacebookUser i : tmpUser.friends) {
+			// Add to list if it does not already exist and is not the initial user we are
+			// making recommendation for
 			if (baseUser != i && !listToReturn.contains(i))
 				listToReturn.add(i);
-			//Recurse friends friends, if not already processed
+			// Recurse friends friends, if not already processed
 			if (!processedUsers.contains(i))
-				recurseFriends(tmpUser,listToReturn,processedUsers,tmpUser);
+				recurseFriends(tmpUser, listToReturn, processedUsers, tmpUser);
 		}
-		
+
 		return listToReturn;
 
-		
-
 	}
-	
-
-
 
 	// Generate facebook users for testing. Uses US Census data and SSA for names
 	void genUsers(int numUsers) {
@@ -195,7 +191,6 @@ public class Facebook implements Serializable {
 			// exists
 			usrObj.friend(tmpUser);
 		}
-		
 
 	}
 
@@ -224,8 +219,6 @@ public class Facebook implements Serializable {
 
 	}
 
-
-
 	// Generate new password
 	// https://docs.oracle.com/javase/8/docs/api/java/security/SecureRandom.html
 	String genPassword(int passLength) {
@@ -246,4 +239,15 @@ public class Facebook implements Serializable {
 		return newPass.toString();
 
 	}
+	/*
+	 * Comparators
+	 */
+
+
+	
+
+
 }
+
+
+
