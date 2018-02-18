@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-
+import java.util.Collections;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -13,7 +13,7 @@ public class FacebookDriver {
 	static Facebook facebookObj = new Facebook();
 	static Scanner scannerObj = new Scanner(System.in); // Object for all user input
 
-	// Function to retrieve integer input. Peforms input validation to only allow
+	// Function to retrieve integer input. Performs input validation to only allow
 	// int
 	static int getInt(String msg) {
 		boolean isInt = false;
@@ -65,15 +65,17 @@ public class FacebookDriver {
 		// Display Menu
 
 		System.out.println("\nMenu");
-		System.out.println("1. List Users");
-		System.out.println("2. Add User");
-		System.out.println("3. Delete User");
-		System.out.println("4. Get Password Hint");
-		System.out.println("5. Friend someone");
-		System.out.println("6. Defriend someone");
-		System.out.println("7. List Friends");
-		System.out.println("8. Recommend Friends");
-		System.out.println("9. Quit");
+		
+		System.out.println("1. List users alphabetically");
+		System.out.println("2. List users by number of friends");
+		System.out.println("3. Add User");
+		System.out.println("4. Delete User");
+		System.out.println("5. Get Password Hint");
+		System.out.println("6. Friend someone");
+		System.out.println("7. Defriend someone");
+		System.out.println("8. List Friends");
+		System.out.println("9. Recommend Friends");
+		System.out.println("10. Quit");
 
 	}
 
@@ -87,9 +89,17 @@ public class FacebookDriver {
 
 	// Prints list of facebook users
 	static void printUsers(ArrayList<FacebookUser> users) {
-		System.out.println("\nUsers:");
+		System.out.println();
+		String format = "%-10s%s%n";
+		System.out.printf(format,"User","Num Friends");
 		for (FacebookUser i : users) {
-			System.out.println(i);
+			try {
+			//	System.out.print(i.getUsername() + "\t" + i.getFriends().size());
+				System.out.printf(format, i.getUsername(),i.getFriends().size());
+			} catch (CloneNotSupportedException e) {
+			
+				System.out.println(e.getMessage());
+			}
 		}
 	}
 
@@ -167,16 +177,28 @@ public class FacebookDriver {
 		// Loop until users decides to quit
 		do {
 			displayMenu();
-			usrChoice = getInt("Please select a choice between 1-9", 1, 9);
+			usrChoice = getInt("Please select a choice between 1-10", 1, 10);
 			switch (usrChoice) {
 			case 1: // Print all facebook users
 				try {
-					printUsers(facebookObj.listUsers());
+					ArrayList<FacebookUser> tmpUsers = facebookObj.listUsers();
+					Collections.sort(tmpUsers,new facebookNameComparator());
+					printUsers(tmpUsers);
 				} catch (CloneNotSupportedException e1) {
 					System.out.println(e1.getMessage());
 				}
 				break;
-			case 2: {// Add new user to facebook
+			case 2: // Print all facebook users
+				try {
+					ArrayList<FacebookUser> tmpUsers = facebookObj.listUsers();
+					Collections.sort(tmpUsers,new facebookFriendsComparator().reversed()); //Sort by number of friends
+					//Collections.sort(tmpUsers,Collections.reverseOrder()); //Reverse order(descending)
+					printUsers(tmpUsers);
+				} catch (CloneNotSupportedException e1) {
+					System.out.println(e1.getMessage());
+				}
+				break;
+			case 3: {// Add new user to facebook
 				try {
 					addUser();
 				} catch (RuntimeException | CloneNotSupportedException e) {
@@ -184,7 +206,7 @@ public class FacebookDriver {
 				}
 				break;
 			}
-			case 3: { // delete user from facebook
+			case 4: { // delete user from facebook
 				try {
 					String usr = getStrInput("Enter username to delete");
 					facebookObj.deleteUser(usr);
@@ -194,7 +216,7 @@ public class FacebookDriver {
 				}
 				break;
 			}
-			case 4: { // Retrieve users password hint
+			case 5: { // Retrieve users password hint
 				try {
 					System.out.println("Password Hint: " + facebookObj.getPasswordHint(getStrInput("Enter username")));
 				} catch (RuntimeException ex) {
@@ -203,7 +225,7 @@ public class FacebookDriver {
 				break;
 
 			}
-			case 5: {
+			case 6: {
 				try {
 					setFriend(1);
 				} catch (RuntimeException | CloneNotSupportedException ex) {
@@ -211,7 +233,7 @@ public class FacebookDriver {
 				}
 				break;
 			}
-			case 6: {
+			case 7: {
 				try {
 					setFriend(2);
 				} catch (RuntimeException | CloneNotSupportedException ex) {
@@ -219,17 +241,17 @@ public class FacebookDriver {
 				}
 				break;
 			}
-			case 7: {
+			case 8: {
 				printFriends();
 				break;
 			}
-			case 8: {
+			case 9: {
 				getRecommendedFriends();
 
 				break;
 			}
 			}
-		} while (usrChoice != 9);
+		} while (usrChoice != 10);
 	}
 
 	static void setFriend(int action) throws RuntimeException, CloneNotSupportedException {
@@ -272,9 +294,8 @@ public class FacebookDriver {
 			else {
 				System.out.println("Recommended friends based on your friend's friends lists");
 				System.out.println("---------------------------------------------------------");
-				for (FacebookUser i : friends) {
-					System.out.println(i);
-				}
+				Collections.sort(friends,new facebookFriendsComparator().reversed()); //Sort by number of friends
+				printUsers(friends);
 			}
 		} catch (RuntimeException e) {
 			System.out.println("Error: " + e.getMessage());
@@ -294,7 +315,7 @@ public class FacebookDriver {
 		} catch (IOException e1) {
 			facebookObj = new Facebook(); // Set to new blank object if no file exists
 		}
-
+		
 		// Generate random user data if debug is enabled
 		if (debug) {
 			// Create user accounts and sort
