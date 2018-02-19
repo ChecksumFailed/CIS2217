@@ -67,7 +67,9 @@ public  class TwitterUser implements Comparable<TwitterUser>{
 	}
 	
 	
-	
+	public String toString() {
+		return this.userID.toString();
+	}
 	
 	
 }
