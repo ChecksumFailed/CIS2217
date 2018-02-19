@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,7 +39,7 @@ public class Twitter {
 				BufferedReader bufferedReader = new BufferedReader(new FileReader(twitterFile));
 				) {
 			while ((lineRead = bufferedReader.readLine()) != null) {
-				System.out.println(lineRead);
+				strToTwitterUser(lineRead);
 			}
 			
 		} catch (IOException e) {
@@ -53,9 +54,15 @@ public class Twitter {
 	void strToTwitterUser(String strToParse) {
 		String twitterRegex = "^(?<userid>\\d+)\\s+(?<followed>\\d+)$";
 		Pattern p = Pattern.compile(twitterRegex);
-		if (Pattern.matches(twitterRegex, strToParse)) {
-			p.matcher(strToParse);
-		}
+		Matcher m = p.matcher(strToParse);
+		if (!m.matches())
+			return;
+		
+		TwitterUser tmpUser = new TwitterUser(Integer.parseInt(m.group("UserID")));
+		TwitterUser tmpFollowed = new TwitterUser(Integer.parseInt(m.group("followed")));
+		
+		
 	}
 	
+
 }
