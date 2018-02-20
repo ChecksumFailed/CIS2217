@@ -7,10 +7,11 @@ public class Driver {
 		System.out.println("Loading twitter data...");
 		twitterObj.loadDB();
 		
+
 		for (TwitterUser i : twitterObj.getList()) {
 			System.out.println(i.getUserID() + " - " + i.getFollowedCount());
 		}
-		
+
 	}
 
 }

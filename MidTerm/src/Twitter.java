@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Twitter {
+
 	private ArrayList<TwitterUser> twitterUsers = new ArrayList<TwitterUser>(); // List of twitter accounts and data
 	private String dbFile = "social_network.edgelist"; // space delimited text file of twitter data. Can be overridden
 														// when constructor called
@@ -27,13 +28,14 @@ public class Twitter {
 	}
 
 	void loadDB() {
-		// Load File
+
 		File twitterFile = new File(this.dbFile);
 		if (!twitterFile.exists()) {
 			Utilities.showMessage(
 					"Unable to find file, " + this.dbFile
 							+ " in current working directory.  Please select the file to use",
 					"Unable to find " + this.dbFile);
+
 			try {
 				twitterFile = Utilities.getFile();
 			} catch (IOException e) {
@@ -92,20 +94,6 @@ public class Twitter {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-	}
-
-	void strToTwitterUser(String strToParse) {
-		// Build Regex
-		String twitterRegex = "^(?<userid>\\d+)\\s+(?<followed>\\d+)$";
-		Pattern p = Pattern.compile(twitterRegex);
-		Matcher m = p.matcher(strToParse);
-
-		if (!m.matches())
-			return;
-
-		TwitterUser tmpUser = new TwitterUser(Integer.parseInt(m.group("UserID")));
-		TwitterUser tmpFollowed = new TwitterUser(Integer.parseInt(m.group("followed")));
 
 	}
 

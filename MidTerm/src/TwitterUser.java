@@ -1,5 +1,7 @@
 import java.util.ArrayList;
+
 import java.util.Collections;
+
 
 public  class TwitterUser implements Comparable<TwitterUser>{
 	private Integer userID;  //Twitter Userid
@@ -72,10 +74,12 @@ public  class TwitterUser implements Comparable<TwitterUser>{
 		return this.userID.toString();
 	}
 	
+
 	boolean isFriend(TwitterUser user) {
 		if (Collections.binarySearch(this.usersFollowed, user) >= 0)
 			return true;
 		else
 			return false;
 	}
+
 }
