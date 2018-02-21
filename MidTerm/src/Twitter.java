@@ -27,7 +27,7 @@ public class Twitter {
 		return (ArrayList<TwitterUser>) this.twitterUsers.clone();
 	}
 
-	void loadDB() {
+	void loadDB() throws IOException {
 
 		File twitterFile = new File(this.dbFile);
 		if (!twitterFile.exists()) {
@@ -39,8 +39,7 @@ public class Twitter {
 			try {
 				twitterFile = Utilities.getFile();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new IOException(e.getMessage());
 			}
 		}
 
@@ -92,12 +91,12 @@ public class Twitter {
 
 		IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new IOException(e.getMessage());
 		}
 
 	}
 
-	ArrayList<TwitterUser> recommendFriends(int userID) throws RuntimeException {
+	ArrayList<TwitterUser> getNeighborhood(int userID) throws RuntimeException {
 		TwitterUser tmpUser = binarySearch(this.twitterUsers,userID);
 		if (tmpUser == null)
 			throw new RuntimeException("Error: User " + userID + " does not exist");
