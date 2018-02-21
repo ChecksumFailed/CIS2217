@@ -81,7 +81,7 @@ public class Twitter {
 						followedUser = this.twitterUsers.get(userIndex);
 
 					// Follow User
-					if (!curUser.isFriend(followedUser))
+					if (!curUser.isFollowed(followedUser))
 						curUser.follow(followedUser);
 
 				}
