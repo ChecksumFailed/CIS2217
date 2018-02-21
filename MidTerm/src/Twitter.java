@@ -97,47 +97,44 @@ public class Twitter {
 	}
 
 	ArrayList<TwitterUser> getNeighborhood(int userID) throws RuntimeException {
-		TwitterUser tmpUser = binarySearch(this.twitterUsers,userID);
+		TwitterUser tmpUser = binarySearch(this.twitterUsers, userID);
 		if (tmpUser == null)
 			throw new RuntimeException("Error: User " + userID + " does not exist");
-		
+
 		ArrayList<TwitterUser> listToReturn = new ArrayList<TwitterUser>();
-		ArrayList<TwitterUser> processedUsers = new ArrayList<TwitterUser>();
-		
-		listToReturn = recurseFollowed(tmpUser, listToReturn, processedUsers, tmpUser,0,4);
+
+		listToReturn = getNeighborhood(tmpUser, listToReturn, tmpUser, 0, 4);
 		return listToReturn;
 
 	}
 
-	ArrayList<TwitterUser> recurseFollowed(TwitterUser baseUser, ArrayList<TwitterUser> listToReturn,
-			ArrayList<TwitterUser> processedUsers, TwitterUser tmpUser, int depth, int maxDepth) {
-
-		if (processedUsers.contains(tmpUser))
-			return listToReturn;
-		processedUsers.add(tmpUser);
+	ArrayList<TwitterUser> getNeighborhood(TwitterUser baseUser, ArrayList<TwitterUser> listToReturn,
+			TwitterUser tmpUser, int depth, int maxDepth) {
 
 		for (TwitterUser i : tmpUser.getFollowed()) {
 			// Add to list if it does not already exist and is not the initial user we are
 			// making recommendation for
-			if (baseUser != i && !listToReturn.contains(i))
+			if (baseUser != i && !listToReturn.contains(i)) {
 				listToReturn.add(i);
-			// Recurse friends friends, if not already processed
-			if (!processedUsers.contains(i) && depth < maxDepth)
-				recurseFollowed(tmpUser, listToReturn, processedUsers, tmpUser,depth++,maxDepth);
+				getNeighborhood(tmpUser, listToReturn, tmpUser, depth++, maxDepth);
+			}
+			//asdf
+		
+
 		}
 
 		return listToReturn;
 
 	}
-	
-	//binary search of twitteruser array, using binary search
+
+	// binary search of twitteruser array, using binary search
 	TwitterUser binarySearch(ArrayList<TwitterUser> twitterArr, int x) {
 		int left = 0;
 		int right = twitterArr.size() - 1;
 		while (left <= right) {
 			int middle = left + (right - left) / 2;
 			TwitterUser tmpUser = twitterArr.get(middle);
-			//Found user
+			// Found user
 			if (tmpUser.getUserID() == x)
 				return tmpUser;
 
@@ -145,12 +142,11 @@ public class Twitter {
 			if (tmpUser.getUserID() < x)
 				left = middle++;
 
-			//  split into left half
+			// split into left half
 			else
 				right = middle--;
 		}
 
-	
 		return null;
 	}
 }
