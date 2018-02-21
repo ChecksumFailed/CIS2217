@@ -103,7 +103,6 @@ public class Facebook implements Serializable {
 		return tmpUser.getFriends();
 
 	}
-
 	ArrayList<FacebookUser> recommendFriends(String userName) throws RuntimeException {
 		FacebookUser tmpUser = searchUser(userName);
 		if (tmpUser == null)
@@ -111,25 +110,22 @@ public class Facebook implements Serializable {
 		//System.out.println(tmpUser.friends.size());
 		ArrayList<FacebookUser> listToReturn = new ArrayList<FacebookUser>();
 		ArrayList<FacebookUser> processedUsers = new ArrayList<FacebookUser>();
-		//listToReturn = recurseFriends(tmpUser, tmpUser.friends, listToReturn, tmpUser);
-		listToReturn = recurseFriends(tmpUser,listToReturn,processedUsers,tmpUser);
+		
+		listToReturn = recurseFriends(tmpUser,listToReturn,tmpUser);
 		return listToReturn;
 
 	}
 
-	ArrayList<FacebookUser> recurseFriends(FacebookUser baseUser,ArrayList<FacebookUser> listToReturn,ArrayList<FacebookUser> processedUsers, FacebookUser tmpUser) {
+	ArrayList<FacebookUser> recurseFriends(FacebookUser baseUser,ArrayList<FacebookUser> listToReturn, FacebookUser tmpUser) {
 	
-		if (processedUsers.contains(tmpUser))
-			return listToReturn;
-		processedUsers.add(tmpUser);
-		
 		for (FacebookUser i: tmpUser.friends) {
 			//Add to list if it does not already exist and is not the initial user we are making recommendation for
-			if (baseUser != i && !listToReturn.contains(i))
+			if (baseUser != i && !listToReturn.contains(i)) {
 				listToReturn.add(i);
-			//Recurse friends friends, if not already processed
-			if (!processedUsers.contains(i))
-				recurseFriends(tmpUser,listToReturn,processedUsers,tmpUser);
+				recurseFriends(tmpUser,listToReturn,tmpUser);
+				
+			}
+				
 		}
 		
 		return listToReturn;
@@ -137,9 +133,6 @@ public class Facebook implements Serializable {
 		
 
 	}
-	
-
-
 
 	// Generate facebook users for testing. Uses US Census data and SSA for names
 	void genUsers(int numUsers) {
