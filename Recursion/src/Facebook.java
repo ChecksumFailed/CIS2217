@@ -109,7 +109,7 @@ public class Facebook implements Serializable {
 			throw new RuntimeException("Error: User " + userName + " does not exist");
 		//System.out.println(tmpUser.friends.size());
 		ArrayList<FacebookUser> listToReturn = new ArrayList<FacebookUser>();
-		ArrayList<FacebookUser> processedUsers = new ArrayList<FacebookUser>();
+		//ArrayList<FacebookUser> processedUsers = new ArrayList<FacebookUser>();
 		
 		listToReturn = recurseFriends(tmpUser,listToReturn,tmpUser);
 		return listToReturn;

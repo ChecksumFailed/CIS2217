@@ -10,13 +10,15 @@ public class Driver {
 		try {
 			twitterObj.loadDB();
 		} catch (IOException e) {
-			Utilities.showMessage( e.getMessage().toString(),"ERROR!!!");
+			Utilities.showError( e.getMessage().toString(),"ERROR!!!");
 		}
 		
 
+		/*
 		for (TwitterUser i : twitterObj.getList()) {
 			System.out.println(i.getUserID() + " - " + i.getFollowedCount());
 		}
+		*/
 
 	}
 

@@ -16,7 +16,7 @@ public class Utilities<E extends Comparable<E>> {
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
 			return fileChooser.getSelectedFile();
 		} else {
-			throw new IOException("Select a valid file to write output too.");
+			throw new IOException("Cancelled, exiting program");
 		}
 
 	}
@@ -44,6 +44,12 @@ public class Utilities<E extends Comparable<E>> {
 	// Message PopUp
 	public static void showMessage(String msg, String title) {
 		JOptionPane.showMessageDialog(null, msg, title, JOptionPane.INFORMATION_MESSAGE);
+
+	}
+	
+	// Message PopUp
+	public static void showError(String msg, String title) {
+		JOptionPane.showMessageDialog(null, msg, title, JOptionPane.ERROR_MESSAGE);
 
 	}
 

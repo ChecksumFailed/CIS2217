@@ -33,7 +33,7 @@ public class Twitter {
 		if (!twitterFile.exists()) {
 			Utilities.showMessage(
 					"Unable to find file, " + this.dbFile
-							+ " in current working directory.  Please select the file to use",
+							+ ", in current working directory.  Please select the file to use",
 					"Unable to find " + this.dbFile);
 
 			try {
@@ -118,7 +118,7 @@ public class Twitter {
 				listToReturn.add(i);
 				getNeighborhood(tmpUser, listToReturn, tmpUser, depth++, maxDepth);
 			}
-			//asdf
+			
 		
 
 		}
