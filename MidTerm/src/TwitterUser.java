@@ -70,16 +70,24 @@ public  class TwitterUser implements Comparable<TwitterUser>{
 	}
 	
 	
+	//toString method
 	public String toString() {
 		return this.userID.toString();
 	}
 	
-
-	boolean isFriend(TwitterUser user) {
+	
+//Check if user is already followed
+	boolean isFollowed(TwitterUser user) {
 		if (Collections.binarySearch(this.usersFollowed, user) >= 0)
 			return true;
 		else
 			return false;
 	}
+	
+	ArrayList<TwitterUser> getFollowed() {
+		return (ArrayList<TwitterUser>) this.usersFollowed.clone();
+	}
+	
+
 
 }
