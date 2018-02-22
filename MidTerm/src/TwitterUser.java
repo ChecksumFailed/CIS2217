@@ -1,11 +1,16 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import java.util.Collections;
 //asdf
 
-public  class TwitterUser implements Comparable<TwitterUser>{
+public  class TwitterUser implements Comparable<TwitterUser>, Cloneable,Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3151299893635380816L;
 	private Integer userID;  //Twitter Userid
-	private ArrayList<TwitterUser> usersFollowed = new ArrayList<TwitterUser>(); //Users followed
+	 ArrayList<TwitterUser> followed = new ArrayList<TwitterUser>(); //Users followed
 	
 	//Constructors
 	public TwitterUser() {
@@ -16,10 +21,10 @@ public  class TwitterUser implements Comparable<TwitterUser>{
 		this.userID = userID;
 	}
 
-	public TwitterUser(Integer userID, ArrayList<TwitterUser> usersFollowed) {
+	public TwitterUser(Integer userID, ArrayList<TwitterUser> followed) {
 		super();
 		this.userID = userID;
-		this.usersFollowed = usersFollowed;
+		this.followed = followed;
 	}
 
 	// Return UserID
@@ -34,7 +39,7 @@ public  class TwitterUser implements Comparable<TwitterUser>{
 
 	//Return the number of users followed
 	int getFollowedCount() {
-		return this.usersFollowed.size();
+		return this.followed.size();
 	}
 	
 	//Compare by UserID
@@ -44,10 +49,11 @@ public  class TwitterUser implements Comparable<TwitterUser>{
 		return this.userID - usrToCompare.userID;
 	}
 	
+	
 	//deep copy clone method
 	public TwitterUser clone() throws CloneNotSupportedException {
 		TwitterUser tmpUsr = new TwitterUser(this.userID);
-		for (TwitterUser userObj : this.usersFollowed) {
+		for (TwitterUser userObj : this.followed) {
 			tmpUsr.follow(userObj);
 		}
 		
@@ -57,16 +63,41 @@ public  class TwitterUser implements Comparable<TwitterUser>{
 	
 	//Follow twitter user
 	void follow(TwitterUser usrObj) {
-		if (this.usersFollowed.contains(usrObj))
+		if (this.followed.contains(usrObj))
 			throw new RuntimeException("ERROR: " + usrObj.userID + " already being followed");
-		this.usersFollowed.add(usrObj);
+		this.followed.add(usrObj);
 	}
 	
-	//Follow twitter user
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((userID == null) ? 0 : userID.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TwitterUser other = (TwitterUser) obj;
+		if (userID == null) {
+			if (other.userID != null)
+				return false;
+		} else if (!userID.equals(other.userID))
+			return false;
+		return true;
+	}
+
+	//unFollow twitter user
 	void unFollow(TwitterUser usrObj) {
-		if (!this.usersFollowed.contains(usrObj))
+		if (!this.followed.contains(usrObj))
 			throw new RuntimeException("ERROR: " + usrObj.userID + " is not being followed");
-		this.usersFollowed.remove(usrObj);
+		this.followed.remove(usrObj);
 	}
 	
 	
@@ -78,14 +109,22 @@ public  class TwitterUser implements Comparable<TwitterUser>{
 	
 //Check if user is already followed
 	boolean isFollowed(TwitterUser user) {
-		if (Collections.binarySearch(this.usersFollowed, user) >= 0)
+		if (Collections.binarySearch(this.followed, user) >= 0)
 			return true;
 		else
 			return false;
 	}
 	
-	ArrayList<TwitterUser> getFollowed() {
-		return (ArrayList<TwitterUser>) this.usersFollowed.clone();
+	ArrayList<TwitterUser> getFollowed() throws CloneNotSupportedException {
+		/*ArrayList<TwitterUser> listToReturn = new ArrayList<TwitterUser>();
+		
+		for (TwitterUser i: this.followed) {
+			listToReturn.add(i.clone());
+			
+		}
+		return listToReturn;
+		*/
+		return this.followed;
 	}
 	
 

@@ -5,10 +5,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Twitter {
+public class Twitter implements Cloneable {
 
 	private ArrayList<TwitterUser> twitterUsers = new ArrayList<TwitterUser>(); // List of twitter accounts and data
 	private String dbFile = "social_network.edgelist"; // space delimited text file of twitter data. Can be overridden
@@ -26,6 +29,8 @@ public class Twitter {
 	ArrayList<TwitterUser> getList() {
 		return (ArrayList<TwitterUser>) this.twitterUsers.clone();
 	}
+	
+	
 
 	void loadDB() throws IOException {
 
@@ -47,13 +52,15 @@ public class Twitter {
 		// Build Regex
 		String twitterRegex = "^(?<userid>\\d+)\\s+(?<followed>\\d+)$";
 		Pattern p = Pattern.compile(twitterRegex);
-
+		
+		
 		// variables
 		String lineRead; // used by bufferedreader
 		TwitterUser curUser = null; // placeholder for current user being processed
 		TwitterUser followedUser = null; // placeHolder for user to follow
 		int userIndex; // used for binary search
-
+		HashMap<Integer,TwitterUser> twitterMap = new HashMap<>(); //Use HashMap to easily store/retrieve values while loading flat file
+		
 		try (BufferedReader bufferedReader = new BufferedReader(new FileReader(twitterFile));) {
 
 			while ((lineRead = bufferedReader.readLine()) != null) {
@@ -65,28 +72,50 @@ public class Twitter {
 					int userID2 = Integer.parseInt(m.group("followed"));
 					// System.out.println(userID);
 					// If userid changed, check if user exists in
-
+					/*
 					if (curUser == null || (curUser.getUserID() != userID)) {
 						curUser = new TwitterUser(userID); // New UserID
-						if ((userIndex = Collections.binarySearch(this.twitterUsers, curUser)) >= 0)
+						if ((userIndex = linearSearch( userID)) >= 0)
+							
 							curUser = this.twitterUsers.get(userIndex);
-						else
+						else {
 							this.twitterUsers.add(curUser); // add to list
+							//Collections.sort(this.twitterUsers);
+						}
+					}*/
+					curUser = twitterMap.get(userID);
+					if(curUser == null) {
+						curUser = new TwitterUser(userID);
+						twitterMap.put(userID, curUser);
 					}
-
+					/*
 					// Check if user to follow needs created
 					followedUser = new TwitterUser(userID2);
-					if ((userIndex = Collections.binarySearch(this.twitterUsers, followedUser)) >= 0)
+					if ((userIndex = linearSearch( userID)) >= 0)
+						
 						followedUser = this.twitterUsers.get(userIndex);
-
+					else {
+						this.twitterUsers.add(followedUser);
+						//Collections.sort(this.twitterUsers);
+					}
+					*/
+					followedUser = twitterMap.get(userID2);
+					if(followedUser == null) {
+						followedUser = new TwitterUser(userID2);
+						twitterMap.put(userID2,followedUser);
+					}
 					// Follow User
 					if (!curUser.isFollowed(followedUser))
 						curUser.follow(followedUser);
+					
+					
 
 				}
 
 			}
-
+			//Add hashmap values to arraylist and sort
+			this.twitterUsers.addAll(twitterMap.values());
+			Collections.sort(this.twitterUsers);
 		} catch (
 
 		IOException e) {
@@ -96,27 +125,29 @@ public class Twitter {
 
 	}
 
-	ArrayList<TwitterUser> getNeighborhood(int userID) throws RuntimeException {
-		TwitterUser tmpUser = binarySearch(this.twitterUsers, userID);
+	ArrayList<TwitterUser> getNeighborhood(int userID, int maxDepth) throws RuntimeException, CloneNotSupportedException {
+		TwitterUser tmpUser = binarySearch( userID);
 		if (tmpUser == null)
 			throw new RuntimeException("Error: User " + userID + " does not exist");
 
 		ArrayList<TwitterUser> listToReturn = new ArrayList<TwitterUser>();
 
-		listToReturn = getNeighborhood(tmpUser, listToReturn, tmpUser, 0, 4);
+		listToReturn = getNeighborhood(tmpUser, listToReturn, tmpUser, 0, maxDepth);
 		return listToReturn;
 
 	}
 
 	ArrayList<TwitterUser> getNeighborhood(TwitterUser baseUser, ArrayList<TwitterUser> listToReturn,
-			TwitterUser tmpUser, int depth, int maxDepth) {
-
-		for (TwitterUser i : tmpUser.getFollowed()) {
+			TwitterUser tmpUser, int depth, int maxDepth) throws CloneNotSupportedException {
+		ArrayList<TwitterUser> asdf = tmpUser.getFollowed();
+		
+		for (TwitterUser i : asdf) {
 			// Add to list if it does not already exist and is not the initial user we are
 			// making recommendation for
-			if (baseUser != i && !listToReturn.contains(i)) {
+			if (!listToReturn.contains(i)) {
 				listToReturn.add(i);
-				getNeighborhood(tmpUser, listToReturn, tmpUser, depth++, maxDepth);
+				if (depth <= maxDepth)
+					getNeighborhood(baseUser, listToReturn, i, ++depth, maxDepth);
 			}
 			
 		
@@ -128,12 +159,12 @@ public class Twitter {
 	}
 
 	// binary search of twitteruser array, using binary search
-	TwitterUser binarySearch(ArrayList<TwitterUser> twitterArr, int x) {
+	TwitterUser binarySearch( int x) throws CloneNotSupportedException {
 		int left = 0;
-		int right = twitterArr.size() - 1;
+		int right = this.twitterUsers.size() - 1;
 		while (left <= right) {
 			int middle = left + (right - left) / 2;
-			TwitterUser tmpUser = twitterArr.get(middle);
+			TwitterUser tmpUser = this.twitterUsers.get(middle);
 			// Found user
 			if (tmpUser.getUserID() == x)
 				return tmpUser;
@@ -148,5 +179,15 @@ public class Twitter {
 		}
 
 		return null;
+	}
+	
+	Integer linearSearch(int x) {
+		for (int i = 0; i < this.twitterUsers.size();i++) {
+			if (this.twitterUsers.get(i).getUserID() == x) 
+				return x;
+						
+		}
+		return -1;
+			
 	}
 }
