@@ -31,8 +31,8 @@ public class Twitter implements Cloneable {
 	}
 	
 	
-
-	void loadDB() throws IOException {
+//Read in twitter data and build list of twitterUsers
+	void loadDB() throws IOException,RuntimeException {
 
 		File twitterFile = new File(this.dbFile);
 		if (!twitterFile.exists()) {
@@ -58,13 +58,13 @@ public class Twitter implements Cloneable {
 		String lineRead; // used by bufferedreader
 		TwitterUser curUser = null; // placeholder for current user being processed
 		TwitterUser followedUser = null; // placeHolder for user to follow
-		int userIndex; // used for binary search
+		//int userIndex; // used for binary search
 		HashMap<Integer,TwitterUser> twitterMap = new HashMap<>(); //Use HashMap to easily store/retrieve values while loading flat file
 		
 		try (BufferedReader bufferedReader = new BufferedReader(new FileReader(twitterFile));) {
-
+			int count = 0;
 			while ((lineRead = bufferedReader.readLine()) != null) {
-
+				count++;
 				Matcher m = p.matcher(lineRead);
 
 				if (m.matches()) {
@@ -110,6 +110,8 @@ public class Twitter implements Cloneable {
 					
 					
 
+				} else {
+					throw new RuntimeException("Malformed data found at line " + count + " in twitter edgelist");
 				}
 
 			}
@@ -125,10 +127,14 @@ public class Twitter implements Cloneable {
 
 	}
 
+	//Recursive function to get all related twitter users, based on followed users.
 	ArrayList<TwitterUser> getNeighborhood(int userID, int maxDepth) throws RuntimeException, CloneNotSupportedException {
 		TwitterUser tmpUser = binarySearch( userID);
 		if (tmpUser == null)
 			throw new RuntimeException("Error: User " + userID + " does not exist");
+		
+		if (tmpUser.getFollowedCount() == 0)
+			throw new RuntimeException(tmpUser.getUserID() + " does not follow anyone");
 
 		ArrayList<TwitterUser> listToReturn = new ArrayList<TwitterUser>();
 
@@ -137,6 +143,7 @@ public class Twitter implements Cloneable {
 
 	}
 
+	//Recursive function to get all related twitter users, based on followed users.
 	ArrayList<TwitterUser> getNeighborhood(TwitterUser baseUser, ArrayList<TwitterUser> listToReturn,
 			TwitterUser tmpUser, int depth, int maxDepth) throws CloneNotSupportedException {
 		ArrayList<TwitterUser> asdf = tmpUser.getFollowed();
@@ -181,6 +188,7 @@ public class Twitter implements Cloneable {
 		return null;
 	}
 	
+	//Simple linear search, returns index number
 	Integer linearSearch(int x) {
 		for (int i = 0; i < this.twitterUsers.size();i++) {
 			if (this.twitterUsers.get(i).getUserID() == x) 

@@ -10,12 +10,14 @@ public class Driver {
 		System.out.println("Loading twitter data(Please be patient)...");
 		try {
 			twitterObj.loadDB();
-		} catch (IOException e) {
+		} catch (IOException|RuntimeException e) {
 			Utilities.showError( e.getMessage().toString(),"ERROR!!!");
 			return;
 		}
 		
 		int testUser = 0;
+		
+		System.out.println("Loaded " + twitterObj.getList().size() + " Unique users and their associated followed users from flat file\n" );
 		TwitterUser tmpUser = twitterObj.binarySearch(testUser);
 		System.out.println("Testing Clone of User " + testUser + "");
 		TwitterUser cloneUser = tmpUser.clone();
