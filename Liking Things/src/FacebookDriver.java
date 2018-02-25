@@ -75,7 +75,9 @@ public class FacebookDriver {
 		System.out.println("7. Defriend someone");
 		System.out.println("8. List Friends");
 		System.out.println("9. Recommend Friends");
-		System.out.println("10. Quit");
+		System.out.println("10. Like something");
+		System.out.println("11. List Likes");
+		System.out.println("12. Quit");
 
 	}
 
@@ -177,7 +179,7 @@ public class FacebookDriver {
 		// Loop until users decides to quit
 		do {
 			displayMenu();
-			usrChoice = getInt("Please select a choice between 1-10", 1, 10);
+			usrChoice = getInt("Please select a choice between 1-12", 1, 12);
 			switch (usrChoice) {
 			case 1: // Print all facebook users
 				try {
@@ -250,8 +252,33 @@ public class FacebookDriver {
 
 				break;
 			}
+			case 10: {
+				try {
+					//Like a string
+					String username = getStrInput("Enter Username: ");
+					String password = getStrInput("Enter Password: ");
+					facebookObj.login(username, password);
+					String strToLike = getStrInput("What do you like: ");
+					facebookObj.like(username, strToLike);
+					System.out.println(username + " likes " + strToLike);
+				} catch (RuntimeException e) {
+					System.out.println("ERROR: " + e.getMessage());
+				}
+				
+				break;
 			}
-		} while (usrChoice != 10);
+			case 11: {
+				String username = getStrInput("Enter Username: ");
+				System.out.println("\nLikes:");
+				System.out.println("-------------------------------------");
+				for (String i: facebookObj.getLikes(username)) {
+					System.out.println(i);
+				}
+
+				break;
+			}
+			}
+		} while (usrChoice != 12);
 	}
 
 	static void setFriend(int action) throws RuntimeException, CloneNotSupportedException {

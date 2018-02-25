@@ -3,6 +3,7 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
+import java.util.TreeSet;
 
 public class Facebook implements Serializable {
 	private static final long serialVersionUID = 7099795459621169470L;
@@ -239,15 +240,59 @@ public class Facebook implements Serializable {
 		return newPass.toString();
 
 	}
-	/*
-	 * Comparators
-	 */
 
+	void login(String username, String password) throws RuntimeException {
 
+		FacebookUser tmpUser = this.binarySearch(username);
+		if (tmpUser == null)
+			throw new RuntimeException("Invalid Username");
+
+		if (!tmpUser.checkPassword(password))
+			throw new RuntimeException("Invalid password entered");
+
+	}
+
+	// binary search of facebook users array, using binary search
+	FacebookUser binarySearch(String x) {
+		int left = 0;
+		int right = this.users.size() - 1;
+		while (left <= right) {
+			int middle = left + (right - left) / 2;
+			FacebookUser tmpUser = this.users.get(middle);
+			// Found user
+			if (tmpUser.getUsername() == x)
+				return tmpUser;
+
+			// split into right half
+			if (tmpUser.getUsername().compareTo(x) < 0)
+				left = middle++;
+
+			// split into left half
+			else
+				right = middle--;
+		}
+
+		return null;
+	}
 	
-
+	void like(String username, String strToLike) throws RuntimeException{
+		FacebookUser tmpUser = this.binarySearch(username);
+		if (tmpUser == null)
+			throw new RuntimeException("Invalid Username");
+		
+		tmpUser.like(strToLike);
+		
+		
+	}
+	
+	TreeSet<String> getLikes(String username) throws RuntimeException {
+		FacebookUser tmpUser = this.binarySearch(username);
+		if (tmpUser == null)
+			throw new RuntimeException("Invalid Username");
+		
+		return tmpUser.getLikes();
+		
+		
+	}
 
 }
-
-
-
