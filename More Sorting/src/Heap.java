@@ -3,18 +3,37 @@ import java.util.ArrayList;
 public class Heap <E extends Comparable<E>>{
 	private ArrayList<E> list = new ArrayList<>();
 	
+	//Default Constructor
 	public Heap() {
 		
 	}
 	
+	
+	//Array of objects
 	public Heap(E[] objects) {
+		System.out.println(objects);
 		for (int i = 0; i <  objects.length; i++) {
 			add(objects[i]);
 		}
 	}
 	
+	
+	//ArrayList of objects
+	public Heap(ArrayList<E> objects) {
+		for (E object : objects) {
+			add(object);
+			
+		}
+	}
+	
+	
+	//5,2,3,1
+	//Add object to Heap
+	// Loop though. If current value is greater than current value, swap.
 	public void add(E newObject) {
+		
 		list.add(newObject);
+		System.out.println(this.list);
 		int currentIndex = list.size() -1 ;
 		
 		while (currentIndex > 0 ) {
@@ -29,11 +48,12 @@ public class Heap <E extends Comparable<E>>{
 			}
 			currentIndex = parentIndex;
 		}
+		System.out.println(this.list);
 		
 	}
 
-}
-
-public E remove() {
+//Remove Object from Heap
+//public E remove() {
 	
+//}
 }
