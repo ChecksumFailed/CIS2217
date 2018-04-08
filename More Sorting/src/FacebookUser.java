@@ -7,6 +7,7 @@
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.EmptyStackException;
 
 public class FacebookUser extends UserAccount implements Comparable<FacebookUser>, Serializable{
@@ -16,6 +17,7 @@ public class FacebookUser extends UserAccount implements Comparable<FacebookUser
 	private static final long serialVersionUID = 1L;
 	String passwordHint;
 	ArrayList<FacebookUser> friends = new ArrayList<FacebookUser>();
+	public static final Comparator<FacebookUser> BY_NUMFRIENDS = new byNumFriends();
 
 	// Default Constructor
 	FacebookUser(String username, String password) {
@@ -81,6 +83,16 @@ public class FacebookUser extends UserAccount implements Comparable<FacebookUser
 		
 		return tmpUsr;
 
+	}
+	
+	private static class byNumFriends implements Comparator<FacebookUser> {
+
+		@Override
+		public int compare(FacebookUser user1, FacebookUser user2) {
+			
+			return Integer.compare(user1.friends.size(),user2.friends.size());
+		}
+		
 	}
 
 }
