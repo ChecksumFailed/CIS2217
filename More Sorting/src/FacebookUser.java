@@ -18,6 +18,7 @@ public class FacebookUser extends UserAccount implements Comparable<FacebookUser
 	String passwordHint;
 	ArrayList<FacebookUser> friends = new ArrayList<FacebookUser>();
 	public static final Comparator<FacebookUser> BY_NUMFRIENDS = new byNumFriends();
+	public static final Comparator<FacebookUser> BY_USERNAME_REVERSE = new byUsernameReverse();
 
 	// Default Constructor
 	FacebookUser(String username, String password) {
@@ -95,4 +96,13 @@ public class FacebookUser extends UserAccount implements Comparable<FacebookUser
 		
 	}
 
+	private static class byUsernameReverse implements Comparator<FacebookUser> {
+
+		@Override
+		public int compare(FacebookUser user1, FacebookUser user2) {
+			
+			return user2.getUsername().compareToIgnoreCase(user1.getUsername());
+		}
+		
+	}
 }

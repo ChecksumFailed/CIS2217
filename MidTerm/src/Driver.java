@@ -8,6 +8,8 @@ public class Driver {
 	public static void main(String[] args) throws CloneNotSupportedException {
 		Twitter twitterObj = new Twitter();
 		System.out.println("Loading twitter data(Please be patient)...");
+		
+		
 		try {
 			twitterObj.loadDB();
 		} catch (IOException|RuntimeException e) {
