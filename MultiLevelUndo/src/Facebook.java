@@ -7,18 +7,29 @@ import java.util.Collections;
 public class Facebook implements Serializable {
 	private static final long serialVersionUID = 7099795459621169470L;
 	private ArrayList<FacebookUser> users = new ArrayList<FacebookUser>(); //Arraylist to hold all users
-
+	private GenericStack<FacebookUndo> undoList = new GenericStack<>();
+	
 	//Constructor
 	public Facebook() {
 
 	}
+	
+	//Constructor
+	public Facebook(ArrayList<FacebookUser> list) {
+        for (FacebookUser f: list) {
+        	this.users.add(f);
+        }
+	}
 
 	// Add new user to facebook
 	void addUser(String userName, String Password, String passwordHint) throws RuntimeException {
+		
 		FacebookUser tmpUser = new FacebookUser(userName, Password);
 		tmpUser.setPasswordHint(passwordHint);
 		this.users.add(tmpUser);
 		Collections.sort(this.users);
+		this.undoList.push(new FacebookUndo("deleteUser",this));
+		
 
 	}
 
@@ -62,5 +73,24 @@ public class Facebook implements Serializable {
 		}
 		return tmpUser.getPasswordHelp();
 	}
+	
+	class FacebookUndo {
+		String undoAction; //Undo action to perform
+		Object sourceObj; //Object to initate undo action against
+		Object undoObj; //Object that is being added/removed back to sourceObj
+		
+		//Constructors
+		FacebookUndo() {
+			
+		}
+		
+		FacebookUndo(String undoAction,Object sourceObj, Object undoObj) {
+			this.undoAction = undoAction;
+			this.sourceObj = sourceObj;
+			this.undoObj = undoObj;
+		}
+	}
+	
 
 }
+
