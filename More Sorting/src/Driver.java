@@ -37,7 +37,7 @@ public class Driver {
         SecureRandom random = new SecureRandom(); // Used to generate random numbers
 
         String upperChar = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        String numChar = "01234567890";
+        
               String passwordChars = (upperChar + upperChar.toLowerCase()); // Combined Character
         // string for password
 
@@ -124,7 +124,7 @@ public class Driver {
     
 	public static <E> void main(String[] args) {
 	       Random rand = new Random();
-	       Utilities utilities = new Utilities();
+	       Utilities<?> utilities = new Utilities<>();
 	       
 		int numElements = 20; //number of elements in each test array
 		

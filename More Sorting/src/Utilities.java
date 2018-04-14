@@ -5,8 +5,8 @@ import java.util.Comparator;
 
 public class Utilities<E extends Comparable<E>> {
 	
-	public static final Comparator<String> BY_STRING_IGNORECASE = new string_IgnoreCase();
-	public static final Comparator<Integer> BY_INTEGER_REVERSE = new int_Reverse();
+	public  final Comparator<String> BY_STRING_IGNORECASE = new string_IgnoreCase();
+	public final Comparator<Integer> BY_INTEGER_REVERSE = new int_Reverse();
 
 	public static <E> ArrayList<E> removeDuplicates(ArrayList<E> list) {
 		if (list.size() == 0)

@@ -3,112 +3,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.InputMismatchException;
-import java.util.Random;
 import java.util.Scanner;
 
 public class FacebookDriver {
-
+	static boolean debug = false;
 	static Facebook facebookObj = new Facebook();
 	static Scanner scannerObj = new Scanner(System.in); // Object for all user input
 
-	
-	 // Generate new password
-    // https://docs.oracle.com/javase/8/docs/api/java/security/SecureRandom.html
-    static String genPassword(int passLength) {
-        StringBuilder newPass = new StringBuilder(); // Used to build password string
-        SecureRandom random = new SecureRandom(); // Used to generate random numbers
-
-        String upperChar = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        String numChar = "01234567890";
-        String specialChar = "!@#$%^&*()_+ ,.-=[] {}~\\/";
-        String passwordChars = (upperChar + upperChar.toLowerCase() + numChar + specialChar); // Combined Character
-        // string for password
-
-        // Append random character until we meet password length.
-        for (int i = 1; i <= passLength; i++) {
-            newPass.append(passwordChars.charAt(random.nextInt(passwordChars.length())));
-        }
-
-        return newPass.toString();
-
-    }
-
-    
-    // Search arraylist for existing user.
-    static Boolean searchList(ArrayList<FacebookUser> listToSearch, String strToSearch) {
-        for (FacebookUser usr : listToSearch) {
-            if (usr.getUsername().equalsIgnoreCase(strToSearch))
-                return true;
-        }
-
-        return false;
-
-    }
-
-    // Generate facebook users for testing. Uses US Census data and SSA for names
-    static ArrayList<FacebookUser> genUsers(int numUsers) {
-        ArrayList<FacebookUser> tmpList = new ArrayList<FacebookUser>();// Array list to hold created users accounts
-
-        // List of first and last names to create random user accounts.
-        String[] surnames = {"SMITH", "JOHNSON", "WILLIAMS", "BROWN", "JONES", "GARCIA", "MILLER", "DAVIS",
-                "RODRIGUEZ", "MARTINEZ", "HERNANDEZ", "LOPEZ", "GONZALEZ", "WILSON", "ANDERSON", "THOMAS", "TAYLOR",
-                "MOORE", "JACKSON", "MARTIN", "LEE", "PEREZ", "THOMPSON", "WHITE", "HARRIS", "SANCHEZ", "CLARK",
-                "RAMIREZ", "LEWIS", "ROBINSON", "WALKER", "YOUNG", "ALLEN", "KING", "WRIGHT", "SCOTT", "TORRES",
-                "NGUYEN", "HILL", "FLORES", "GREEN", "ADAMS", "NELSON", "BAKER", "HALL", "RIVERA", "CAMPBELL",
-                "MITCHELL", "CARTER", "ROBERTS"};
-        String[] firstNames = {"Noah", "Liam", "William", "Mason", "James", "Benjamin", "Jacob", "Michael", "Elijah",
-                "Ethan", "Alexander", "Oliver", "Daniel", "Lucas", "Matthew", "Aiden", "Jackson", "Logan", "David",
-                "Joseph", "Samuel", "Henry", "Owen", "Sebastian", "Gabriel", "Emma", "Olivia", "Ava", "Sophia",
-                "Isabella", "Mia", "Charlotte", "Abigail", "Emily", "Harper", "Amelia", "Evelyn", "Elizabeth", "Sofia",
-                "Madison", "Avery", "Ella", "Scarlett", "Grace", "Chloe", "Victoria", "Riley", "Aria", "Lily",
-                "Aubrey"};
-        Random rand = new Random();
-        String userName;
-
-        // create users and build list
-        for (int i = 1; i <= numUsers; i++) {
-            do {
-                userName = firstNames[rand.nextInt(firstNames.length)] + "." + surnames[rand.nextInt(surnames.length)]; // Generate
-                // Username
-            } while (searchList(tmpList, userName)); // Check if user already exists
-            String userPassword = genPassword(8); // generate random password
-            FacebookUser tmpUsr = new FacebookUser(userName, userPassword); // create new user
-            tmpUsr.setPasswordHint("Your Password is: " + userPassword); // set password hint
-            // tmpUsr.getPasswordHelp();
-            tmpList.add(tmpUsr);
-        }
-        
-        for (FacebookUser f: tmpList) {
-        	addRandomFriends(f,tmpList);
-        }
-        return tmpList;
-    }
-	
-    // Generate random friend lists
-    static void addRandomFriends(FacebookUser usrObj, ArrayList<FacebookUser> allUsers) {
-        Random rand = new Random();
-        if (allUsers.size() == 1) {
-            System.out.println("Error:  List must contain other users to add to friends list");
-            return;
-        }
-        int numFriends = rand.nextInt(allUsers.size() - 1); // Random number of friends.  Reduce by one to exclude self
-        int numAvailable = allUsers.size(); // Total number for user accounts available
-        FacebookUser tmpUser; // user object to add to friends list
-
-        for (int i = 0; i <= numFriends; i++) {
-            do {
-                tmpUser = allUsers.get(rand.nextInt(numAvailable));
-            } while (usrObj.equals(tmpUser) || usrObj.friends.contains(tmpUser)); // Do not add account if it is the
-            // same as user object or already
-            // exists
-            usrObj.friend(tmpUser);
-        }
-
-    }
-	// Function to retrieve integer input. Peforms input validation to only allow
+	// Function to retrieve integer input. Performs input validation to only allow
 	// int
 	static int getInt(String msg) {
 		boolean isInt = false;
@@ -155,29 +60,53 @@ public class FacebookDriver {
 
 	}
 
-	//Displays basic menu for user input
+	// Displays basic menu for user input
 	static void displayMenu() {
 		// Display Menu
 
 		System.out.println("\nMenu");
-		System.out.println("1. List Users");
-		System.out.println("2. Add User");
-		System.out.println("3. Delete User");
-		System.out.println("4. Get Password Hint");
-		System.out.println("5. Quit");
+		
+		System.out.println("1. List users alphabetically");
+		System.out.println("2. List users by number of friends");
+		System.out.println("3. Add User");
+		System.out.println("4. Delete User");
+		System.out.println("5. Get Password Hint");
+		System.out.println("6. Friend someone");
+		System.out.println("7. Defriend someone");
+		System.out.println("8. List Friends");
+		System.out.println("9. Recommend Friends");
+		System.out.println("10. Like something");
+		System.out.println("11. List Likes");
+		System.out.println("12. Quit");
 
 	}
 
-	//Prints list of facebook users
+	static FacebookUser searchUsers(String userName) throws CloneNotSupportedException {
+		for (FacebookUser i : facebookObj.listUsers()) {
+			if (i.toString().equalsIgnoreCase(userName))
+				return i;
+		}
+		return null;
+	}
+
+	// Prints list of facebook users
 	static void printUsers(ArrayList<FacebookUser> users) {
-		System.out.println("\nUsers:");
+		System.out.println();
+		String format = "%-10s%s%n";
+		System.out.printf(format,"User","Num Friends");
 		for (FacebookUser i : users) {
-			System.out.println(i);
+			try {
+			//	System.out.print(i.getUsername() + "\t" + i.getFriends().size());
+				System.out.printf(format, i.getUsername(),i.getFriends().size());
+			} catch (CloneNotSupportedException e) {
+			
+				System.out.println(e.getMessage());
+			}
 		}
 	}
 
-	//Retrieves string input from user
-	static String getStrInput(String msg) {
+	// Retrieves string input from user
+	public static String getStrInput(String msg) {
 
 		System.out.println(msg);
 
@@ -185,12 +114,12 @@ public class FacebookDriver {
 
 	}
 
-	//Adds user to facebook.
-	static void addUser() {
+	// Adds user to facebook.
+	static void addUser() throws CloneNotSupportedException {
 		String userName = getStrInput("Enter Username to add");
 
-		//Perform a search for user before asking for more info
-		if (facebookObj.searchUser(userName) != null) {
+		// Perform a search for user before asking for more info
+		if (searchUsers(userName) != null) {
 			System.out.println("Error: User already exists");
 			return;
 		}
@@ -198,11 +127,15 @@ public class FacebookDriver {
 		String password = getStrInput("Enter password for new user");
 		String passwordHint = getStrInput("Enter password hint for new user");
 
-		facebookObj.addUser(userName, password, passwordHint);
+		try {
+			facebookObj.addUser(userName, password, passwordHint);
+		} catch (RuntimeException e) {
+			System.out.println(e.getMessage());
+		}
 
 	}
 
-	//Write facebook object to file
+	// Write facebook object to file
 	static void writeDB() throws IOException {
 		try (ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("facebook.dat", false));) {
 
@@ -210,7 +143,7 @@ public class FacebookDriver {
 		}
 	}
 
-	//Read facebook object from file
+	// Read facebook object from file
 	static void readDB() throws IOException, ClassNotFoundException {
 		try (ObjectInputStream input = new ObjectInputStream(new FileInputStream("facebook.dat"));) {
 
@@ -219,51 +152,73 @@ public class FacebookDriver {
 		}
 	}
 
-	//Main function of driver
-	public static void main(String[] args) throws CloneNotSupportedException {
-		int usrChoice = 0;
-		boolean debug = false;
-		
-		//Load Facebook Object
+	// Print out list of friends
+	static void printFriends() {
+		String userName = getStrInput("Enter username");
+		ArrayList<FacebookUser> tmpList;
 		try {
-			readDB();
-		} catch (ClassNotFoundException e1) {
-			System.out.print(e1.getMessage());
-		} catch (IOException e1) {
-			
-			if (debug)
-				facebookObj = new Facebook(genUsers(20)); 
-			else
-				facebookObj = new Facebook(); //Set to new blank object if no file exists
+			tmpList = facebookObj.getFriends(userName);
+			if (tmpList.size() == 0) {
+				System.out.println("No friends in friends list");
+				return;
+			}
+			System.out.println("\n" + userName + "'s Friend list");
+			System.out.println("----------------------------");
+			for (FacebookUser i : tmpList) {
+				System.out.println(i);
+			}
+		} catch (RuntimeException | CloneNotSupportedException e) {
+			System.out.println(e.getMessage());
 		}
 
-		//Loop until users decides to quit
+	}
+
+	// Manages user input
+	static void runFacebook() {
+		int usrChoice = 0;
+		// Loop until users decides to quit
 		do {
 			displayMenu();
-			usrChoice = getInt("Please select a choice between 1-5", 1, 5);
+			usrChoice = getInt("Please select a choice between 1-12", 1, 12);
 			switch (usrChoice) {
-			case 1: //Print all facebook users
-				printUsers(facebookObj.listUsers());
+			case 1: // Print all facebook users
+				try {
+					ArrayList<FacebookUser> tmpUsers = facebookObj.listUsers();
+					Collections.sort(tmpUsers,new facebookNameComparator());
+					printUsers(tmpUsers);
+				} catch (CloneNotSupportedException e1) {
+					System.out.println(e1.getMessage());
+				}
 				break;
-			case 2: {//Add new user to facebook
+			case 2: // Print all facebook users
+				try {
+					ArrayList<FacebookUser> tmpUsers = facebookObj.listUsers();
+					Collections.sort(tmpUsers,new facebookFriendsComparator().reversed()); //Sort by number of friends
+					//Collections.sort(tmpUsers,Collections.reverseOrder()); //Reverse order(descending)
+					printUsers(tmpUsers);
+				} catch (CloneNotSupportedException e1) {
+					System.out.println(e1.getMessage());
+				}
+				break;
+			case 3: {// Add new user to facebook
 				try {
 					addUser();
-				} catch (Exception e) {
+				} catch (RuntimeException | CloneNotSupportedException e) {
 					System.out.println(e.getMessage());
 				}
 				break;
 			}
-			case 3: { //delete user from facebook
+			case 4: { // delete user from facebook
 				try {
 					String usr = getStrInput("Enter username to delete");
 					facebookObj.deleteUser(usr);
 					System.out.println("\nDeleted " + usr + " from facebook");
-				} catch (Exception e) {
+				} catch (RuntimeException e) {
 					System.out.println(e.getMessage());
 				}
 				break;
 			}
-			case 4: { //Retrieve users password hint
+			case 5: { // Retrieve users password hint
 				try {
 					System.out.println("Password Hint: " + facebookObj.getPasswordHint(getStrInput("Enter username")));
 				} catch (RuntimeException ex) {
@@ -272,12 +227,136 @@ public class FacebookDriver {
 				break;
 
 			}
+			case 6: {
+				try {
+					setFriend(1);
+				} catch (RuntimeException | CloneNotSupportedException ex) {
+					System.out.println(ex.getMessage());
+				}
+				break;
 			}
-		} while (usrChoice != 5);
+			case 7: {
+				try {
+					setFriend(2);
+				} catch (RuntimeException | CloneNotSupportedException ex) {
+					System.out.println(ex.getMessage());
+				}
+				break;
+			}
+			case 8: {
+				printFriends();
+				break;
+			}
+			case 9: {
+				getRecommendedFriends();
 
-		scannerObj.close(); //Close scanner
+				break;
+			}
+			case 10: {
+				try {
+					//Like a string
+					String username = getStrInput("Enter Username: ");
+					String password = getStrInput("Enter Password: ");
+					facebookObj.login(username, password);
+					String strToLike = getStrInput("What do you like: ");
+					facebookObj.like(username, strToLike);
+					System.out.println(username + " likes " + strToLike);
+				} catch (RuntimeException e) {
+					System.out.println("ERROR: " + e.getMessage());
+				}
+				
+				break;
+			}
+			case 11: {
+				String username = getStrInput("Enter Username: ");
+				System.out.println("\nLikes:");
+				System.out.println("-------------------------------------");
+				for (String i: facebookObj.getLikes(username)) {
+					System.out.println(i);
+				}
+
+				break;
+			}
+			}
+		} while (usrChoice != 12);
+	}
+
+	static void setFriend(int action) throws RuntimeException, CloneNotSupportedException {
+		String userName = getStrInput("Enter username");
+		FacebookUser usrObj = searchUsers(userName);
+		if (usrObj == null)
+			throw new RuntimeException("ERROR: " + userName + " does not exist in facebook database");
+
+		String userPassword = getStrInput("Enter password");
+		if (!usrObj.checkPassword(userPassword))
+			throw new RuntimeException("ERROR: " + "incorrect password entered");
+
+		switch (action) {
+		case 1: {
+			userName = getStrInput("Enter username to add friends list");
+			FacebookUser friendToAdd = searchUsers(userName);
+			if (friendToAdd == null)
+				throw new RuntimeException("ERROR: " + userName + " does not exist in facebook database");
+			facebookObj.friend(usrObj.getUsername(), friendToAdd.getUsername());
+			break;
+		}
+		case 2: {
+			userName = getStrInput("Enter username to remove from friends list");
+			FacebookUser friendToAdd = searchUsers(userName);
+			if (friendToAdd == null)
+				throw new RuntimeException("ERROR: " + userName + " does not exist in facebook database");
+			facebookObj.deFriend(usrObj.getUsername(), friendToAdd.getUsername());
+			break;
+		}
+		}
+
+	}
+
+	static void getRecommendedFriends() {
+		try {
+			ArrayList<FacebookUser> friends = facebookObj.recommendFriends(getStrInput("Enter Username"));
+
+			if (friends.size() == 0)
+				System.out.println("No friends to recommend");
+			else {
+				System.out.println("Recommended friends based on your friend's friends lists");
+				System.out.println("---------------------------------------------------------");
+				Collections.sort(friends,new facebookFriendsComparator().reversed()); //Sort by number of friends
+				printUsers(friends);
+			}
+		} catch (RuntimeException e) {
+			System.out.println("Error: " + e.getMessage());
+			return;
+		}
+
+	}
+
+	// Main function of driver
+	public static void main(String[] args) {
+
+		// Load Facebook Object
+		try {
+			readDB();
+		} catch (ClassNotFoundException e1) {
+			System.out.print(e1.getMessage());
+		} catch (IOException e1) {
+			facebookObj = new Facebook(); // Set to new blank object if no file exists
+		}
 		
-		//Save changes to disk
+		// Generate random user data if debug is enabled
+		if (debug) {
+			// Create user accounts and sort
+			int numUsers = 10;
+			System.out.println("Creating " + numUsers + " facebook user accounts");
+			facebookObj.genUsers(numUsers); // List of user accounts created by driver
+
+		}
+
+		runFacebook(); // Show menu and manage user input
+
+		scannerObj.close(); // Close scanner
+
+		// Save changes to disk
 		System.out.println("Writing Facebook database to disk");
 		try {
 			writeDB();

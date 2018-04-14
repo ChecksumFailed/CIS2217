@@ -8,6 +8,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EmptyStackException;
+import java.util.HashSet;
+import java.util.TreeSet;
 
 public class FacebookUser extends UserAccount implements Comparable<FacebookUser>, Serializable{
 	/**
@@ -16,6 +18,8 @@ public class FacebookUser extends UserAccount implements Comparable<FacebookUser
 	private static final long serialVersionUID = 1L;
 	String passwordHint;
 	ArrayList<FacebookUser> friends = new ArrayList<FacebookUser>();
+	HashSet<String> likes = new HashSet<String>();
+	
 
 	// Default Constructor
 	FacebookUser(String username, String password) {
@@ -81,6 +85,15 @@ public class FacebookUser extends UserAccount implements Comparable<FacebookUser
 		
 		return tmpUsr;
 
+	}
+	
+	void like(String strToLike) {
+		this.likes.add(strToLike);
+		
+	}
+	
+	TreeSet<String> getLikes() {
+		return new TreeSet<String>(this.likes);
 	}
 
 }
