@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+
+
 public class FacebookDriver {
 	static boolean debug = false;
 	static Facebook facebookObj = new Facebook();
@@ -77,7 +79,8 @@ public class FacebookDriver {
 		System.out.println("9. Recommend Friends");
 		System.out.println("10. Like something");
 		System.out.println("11. List Likes");
-		System.out.println("12. Quit");
+		System.out.println("12. Undo");
+		System.out.println("13. Quit");
 
 	}
 
@@ -143,6 +146,29 @@ public class FacebookDriver {
 		}
 	}
 
+	static void login() {
+		try {
+			String username = getStrInput("Enter Username: ");
+			String password = getStrInput("Enter Password: ");
+			facebookObj.login(username, password);
+		} catch (RuntimeException e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
+		}
+		
+	}
+	
+	static void login(String username) {
+		try {
+			
+			String password = getStrInput("Enter Password: ");
+			facebookObj.login(username, password);
+		} catch (RuntimeException e) {
+			// TODO Auto-generated catch block
+			System.out.println(e.getMessage());
+		}
+		
+	}
 	// Read facebook object from file
 	static void readDB() throws IOException, ClassNotFoundException {
 		try (ObjectInputStream input = new ObjectInputStream(new FileInputStream("facebook.dat"));) {
@@ -179,7 +205,7 @@ public class FacebookDriver {
 		// Loop until users decides to quit
 		do {
 			displayMenu();
-			usrChoice = getInt("Please select a choice between 1-12", 1, 12);
+			usrChoice = getInt("Please select a choice between 1-13", 1, 13);
 			switch (usrChoice) {
 			case 1: // Print all facebook users
 				try {
@@ -277,8 +303,26 @@ public class FacebookDriver {
 
 				break;
 			}
+			case 12: {
+				try {
+					if (facebookObj.undoList.getSize() == 0) {
+						System.out.println("No actions to undo");
+						break;
+					}
+						
+					FacebookUser tmpUsr = facebookObj.undoList.peek().sourceObj;
+					if (tmpUsr != null) {
+						login(tmpUsr.getUsername());
+					}
+					
+					System.out.println(facebookObj.undo());
+				} catch (RuntimeException e) {
+					// TODO Auto-generated catch block
+					System.out.println(e.getMessage());
+				}
 			}
-		} while (usrChoice != 12);
+			}
+		} while (usrChoice != 13);
 	}
 
 	static void setFriend(int action) throws RuntimeException, CloneNotSupportedException {
@@ -333,7 +377,7 @@ public class FacebookDriver {
 
 	// Main function of driver
 	public static void main(String[] args) {
-
+    
 		// Load Facebook Object
 		try {
 			readDB();

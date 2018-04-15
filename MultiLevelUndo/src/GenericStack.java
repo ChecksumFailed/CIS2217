@@ -1,8 +1,11 @@
 import java.util.ArrayList;
 
 public class GenericStack<E> {
-	private ArrayList<E> list = new ArrayList<>();
+	private ArrayList<E> list;
 
+	GenericStack() {
+		list = new ArrayList<E>();
+	}
 	public int getSize() {
 		return list.size();
 	}
@@ -12,6 +15,7 @@ public class GenericStack<E> {
 	}
 
 	public void push(E o) {
+		System.out.println("Adding " + o.toString() + " to stack");
 		list.add(o);
 	}
 
