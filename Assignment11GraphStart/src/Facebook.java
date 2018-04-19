@@ -373,7 +373,7 @@ public class Facebook implements Serializable {
 		FacebookUser user = null;
 
 		for (FacebookUser u: users) {
-			if (u.toString().equals(name)) {
+			if (u.toString().equalsIgnoreCase(name)) {
 				user = u;
 				break;
 			}
