@@ -95,7 +95,7 @@ public class FacebookDriver {
 	// Prints list of facebook users
 	static void printUsers(ArrayList<FacebookUser> users) {
 		System.out.println();
-		String format = "%-10s%s%n";
+		String format = "%-30s%s%n";
 		System.out.printf(format,"User","Num Friends");
 		for (FacebookUser i : users) {
 			try {
@@ -142,7 +142,12 @@ public class FacebookDriver {
 	static void writeDB() throws IOException {
 		try (ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("facebook.dat", false));) {
 
-			output.writeObject(facebookObj);
+			try {
+				output.writeObject(facebookObj.listUsers());
+			} catch (CloneNotSupportedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -158,25 +163,42 @@ public class FacebookDriver {
 		
 	}
 	
-	static void login(String username) {
+	static void login(FacebookUser usr) {
 		try {
 			
-			String password = getStrInput("Enter Password: ");
-			facebookObj.login(username, password);
+			String password = getStrInput("Enter Password for " + usr.getUsername());
+			if (!usr.checkPassword(password))
+					throw new RuntimeException("Invalid password");
 		} catch (RuntimeException e) {
 			// TODO Auto-generated catch block
 			System.out.println(e.getMessage());
 		}
 		
 	}
+
 	// Read facebook object from file
-	static void readDB() throws IOException, ClassNotFoundException {
+static 	ArrayList<FacebookUser>  readDB() throws IOException, ClassNotFoundException {
 		try (ObjectInputStream input = new ObjectInputStream(new FileInputStream("facebook.dat"));) {
 
-			facebookObj = (Facebook) input.readObject();
+			//facebookObj = (Facebook) input.readObject();
+			return (ArrayList<FacebookUser>) input.readObject();
 
 		}
 	}
+	
+
+/*
+
+// Read facebook object from file
+static 	void  readDB() throws IOException, ClassNotFoundException {
+	try (ObjectInputStream input = new ObjectInputStream(new FileInputStream("facebook.dat"));) {
+
+		facebookObj = (Facebook) input.readObject();
+		//return (ArrayList<FacebookUser>) input.readObject();
+
+	}
+}
+*/
 
 	// Print out list of friends
 	static void printFriends() {
@@ -312,7 +334,7 @@ public class FacebookDriver {
 						
 					FacebookUser tmpUsr = facebookObj.undoList.peek().sourceObj;
 					if (tmpUsr != null) {
-						login(tmpUsr.getUsername());
+						login(tmpUsr);
 					}
 					
 					System.out.println(facebookObj.undo());
@@ -380,7 +402,9 @@ public class FacebookDriver {
     
 		// Load Facebook Object
 		try {
-			readDB();
+			facebookObj = new Facebook(readDB());
+			//readDB();
+			
 		} catch (ClassNotFoundException e1) {
 			System.out.print(e1.getMessage());
 		} catch (IOException e1) {

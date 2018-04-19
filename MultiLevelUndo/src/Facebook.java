@@ -1,3 +1,14 @@
+/* Data Structure Used: Stack
+
+ * Reason: Requirements were to have a list of undo actions that are processed last in/last out.   Stack was the obvious choice do to
+ * 			this requirement.  
+ * Undo Operations Supported:
+ * 	  Friend
+ *    deFriend
+ *    Add User
+ *    Delete User
+ */
+
 import java.io.Serializable;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -9,7 +20,6 @@ public class Facebook implements Serializable {
 	private static final long serialVersionUID = 7099795459621169470L;
 	private ArrayList<FacebookUser> users = new ArrayList<FacebookUser>(); // Arraylist to hold all users
 	GenericStack<FacebookUndo> undoList = new GenericStack<FacebookUndo>();
-	GenericStack<String> tstList = new GenericStack<String>();
 
 	// Constructor
 	public Facebook() {
@@ -20,43 +30,46 @@ public class Facebook implements Serializable {
 		users.addAll(list);
 	}
 
-	//Method to undo the last action in Undo Stack.
+	// Method to undo the last action in Undo Stack.
 	String undo() throws RuntimeException {
-		
+
 		String msgToReturn;
-		//Throw exception if list is empty
+		
+		// Throw exception if list is empty
 		if (this.undoList.getSize() == 0)
 			throw new RuntimeException("Error: No undo actions available");
-
+		
 		try {
-			FacebookUndo undoObj = this.undoList.pop(); //get last element from stack
-
+			FacebookUndo undoObj = this.undoList.pop(); // get last element from stack
+			int listSize = this.undoList.getSize();
 			switch (undoObj.undoAction) {
-			case "deleteUser": //Undo deletions
-					this.addUser(undoObj.undoObj);		
-					msgToReturn = "Reverted Action: " + undoObj.undoAction + ", on user: " + undoObj.undoObj.toString();
-					break;
-			case "addUser": //undo Additions
-					this.users.remove(undoObj.undoObj);
-					msgToReturn = "Reverted Action: " + undoObj.undoAction + ", on user: " + undoObj.undoObj;
-					break;
-			case "friend": //undo Additions
-				undoObj.sourceObj.defriend(undoObj.undoObj);
-				msgToReturn = "Reverted Action: " + undoObj.undoAction + ", on user: " + undoObj.undoObj;
+			case "deleteUser": // Undo deletions
+				this.addUser(undoObj.undoObj);
+				msgToReturn = "Reverted Action: " + undoObj.undoAction + ", on user: " + undoObj.undoObj.toString();
 				break;
-			case "deFriend": //undo Additions
+			case "addUser": // undo Additions
+				this.users.remove(undoObj.undoObj);
+				msgToReturn = "Reverted Action: " + undoObj.undoAction + ", on user: " + undoObj.undoObj.toString();
+				break;
+			case "friend": // undo Additions
+				undoObj.sourceObj.defriend(undoObj.undoObj);
+				msgToReturn = "Reverted Action: " + undoObj.undoAction + ", on user: " + undoObj.undoObj.toString();
+				break;
+			case "deFriend": // undo Additions
 				undoObj.sourceObj.friend(undoObj.undoObj);
-				msgToReturn = "Reverted Action: " + undoObj.undoAction + ", on user: " + undoObj.undoObj;
+				msgToReturn = "Reverted Action: " + undoObj.undoAction + ", on user: " + undoObj.undoObj.toString();
 				break;
 			default:
 				throw new RuntimeException("Error: Invalid undo action");
-				
+
 			}
+			if (this.undoList.getSize() > listSize)
+				this.undoList.pop(); //Do not want actions initiated by undo method to add to undo list
 		} catch (RuntimeException e) {
 			// TODO Auto-generated catch block
 			throw new RuntimeException(e.getMessage());
 		}
-		this.undoList.pop(); //Do not want undo method to add to the undo stack
+	
 		return msgToReturn;
 	}
 
@@ -66,12 +79,12 @@ public class Facebook implements Serializable {
 		tmpUser.setPasswordHint(passwordHint);
 		this.users.add(tmpUser);
 		Collections.sort(this.users);
-		FacebookUndo tmpUndo = new FacebookUndo("addUser",tmpUser);
-		System.out.println(tmpUndo.undoAction);
-		this.undoList.push(tmpUndo);
-		this.tstList.push("Work damn you");
-		System.out.println(this.undoList);
-		System.out.println(this.tstList);
+		FacebookUndo tmpUndo = new FacebookUndo("addUser", tmpUser);
+		// System.out.println(tmpUndo.undoAction);
+		this.undoList.push(tmpUndo); // add to undo list
+
+		// System.out.println(this.undoList);
+
 	}
 
 	// Add new user to facebook
@@ -80,7 +93,7 @@ public class Facebook implements Serializable {
 			throw new RuntimeException("Error: User already exists");
 		this.users.add(tmpUser);
 		Collections.sort(this.users);
-		this.undoList.push(new FacebookUndo("addUser",null,tmpUser));
+		this.undoList.push(new FacebookUndo("addUser", null, tmpUser));
 
 	}
 
@@ -92,7 +105,7 @@ public class Facebook implements Serializable {
 			throw new RuntimeException("Error: User " + userName + " does not exist");
 		}
 		this.users.remove(tmpUser);
-		FacebookUndo tmpUndo = new FacebookUndo("deleteUser",null,tmpUser);
+		FacebookUndo tmpUndo = new FacebookUndo("deleteUser", null, tmpUser);
 		this.undoList.push(tmpUndo);
 
 	}
@@ -105,14 +118,15 @@ public class Facebook implements Serializable {
 		else
 			throw new RuntimeException("Error: User " + tmpUser.toString() + " does not exist");
 
-		this.undoList.push(new FacebookUndo("deleteUser",null,tmpUser));
+		this.undoList.push(new FacebookUndo("deleteUser", null, tmpUser));
 	}
 
 	// Search for user. Return null if not found
 	private FacebookUser searchUser(String userName) {
 
 		for (FacebookUser i : this.users) {
-			if (i.toString().equalsIgnoreCase(userName))
+			//System.out.println(i);
+			if (i.getUsername().equalsIgnoreCase(userName))
 				return i;
 		}
 		return null;
@@ -151,7 +165,7 @@ public class Facebook implements Serializable {
 		}
 
 		baseUser.friend(friendUser);
-		this.undoList.push(new FacebookUndo("friend",baseUser,friendUser));
+		this.undoList.push(new FacebookUndo("friend", baseUser, friendUser));
 
 	}
 
@@ -167,8 +181,8 @@ public class Facebook implements Serializable {
 			throw new RuntimeException("Error: User " + userName + " does not exist");
 		}
 
-		baseUser.friend(friendUser);
-		this.undoList.push(new FacebookUndo("friend",baseUser,friendUser));
+		baseUser.defriend(friendUser);
+		this.undoList.push(new FacebookUndo("deFriend", baseUser, friendUser));
 	}
 
 	ArrayList<FacebookUser> getFriends(String userName) throws RuntimeException, CloneNotSupportedException {
@@ -369,8 +383,6 @@ public class Facebook implements Serializable {
 
 	}
 
-
-
 }
 
 class FacebookUndo {
@@ -388,9 +400,10 @@ class FacebookUndo {
 		this.sourceObj = sourceObj;
 		this.undoObj = undoObj;
 	}
-	FacebookUndo(String undoAction,  FacebookUser undoObj) {
+
+	FacebookUndo(String undoAction, FacebookUser undoObj) {
 		this.undoAction = undoAction;
-	
+
 		this.undoObj = undoObj;
 	}
 }

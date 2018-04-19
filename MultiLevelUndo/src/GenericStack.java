@@ -15,7 +15,7 @@ public class GenericStack<E> {
 	}
 
 	public void push(E o) {
-		System.out.println("Adding " + o.toString() + " to stack");
+		//System.out.println("Adding " + o.toString() + " to stack");
 		list.add(o);
 	}
 
