@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
+import java.util.HashMap;
 
 import javax.swing.JFrame;
 
@@ -21,6 +22,7 @@ import edu.uci.ics.jung.visualization.renderers.Renderer.VertexLabel.Position;
 
 public class GraphViewer extends JFrame {
 	private static final long serialVersionUID = 1L;
+	HashMap<String,Graph> userVertexMap = new HashMap<>();
 
 	public GraphViewer(final FacebookUser user) {
 
