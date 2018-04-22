@@ -6,16 +6,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.HashMap;
 import java.util.Map;
+
 
 public class Twitter implements Cloneable {
 
 	private ArrayList<TwitterUser> twitterUsers = new ArrayList<TwitterUser>(); // List of twitter accounts and data
 	private String dbFile = "social_network.edgelist"; // space delimited text file of twitter data. Can be overridden
 														// when constructor called
+	
 
 	// Constructors
 	public Twitter() {
@@ -29,6 +32,7 @@ public class Twitter implements Cloneable {
 	ArrayList<TwitterUser> getList() {
 		return (ArrayList<TwitterUser>) this.twitterUsers.clone();
 	}
+	
 	
 	
 //Read in twitter data and build list of twitterUsers
@@ -117,7 +121,9 @@ public class Twitter implements Cloneable {
 			}
 			//Add hashmap values to arraylist and sort
 			this.twitterUsers.addAll(twitterMap.values());
-			Collections.sort(this.twitterUsers);
+			HeapSort.fromList(this.twitterUsers);
+		
+			//Collections.sort(this.twitterUsers);
 		} catch (
 
 		IOException e) {

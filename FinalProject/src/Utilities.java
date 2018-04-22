@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -28,34 +29,9 @@ public class Utilities<E extends Comparable<E>> {
 
 	}
 
-	public <E extends Comparable<E>> void heapSort(E[] list) {
-		Heap<E> heap = new Heap<>();
 
-		// add elements to heap
-		for (int i = 0; i < list.length; i++) {
-			heap.add(list[i]);
-		}
+	
 
-		// remove elements from heap
-		for (int i = list.length - 1; i >= 0; i--) {
-			list[i] = heap.remove();
-		}
-
-	}
-
-	public <E extends Comparable<E>> void heapSort(E[] list, Comparator<? super E> comparator) {
-		Heap<E> heap = new Heap<E>(comparator);
-
-		// add elements to heap
-		for (int i = 0; i < list.length; i++) {
-			heap.add(list[i]);
-		}
-
-		// remove elements from heap
-		for (int i = list.length - 1; i >= 0; i--) {
-			list[i] = heap.remove();
-		}
-	}
 
 	private static class int_Reverse implements Comparator<Integer> {
 
