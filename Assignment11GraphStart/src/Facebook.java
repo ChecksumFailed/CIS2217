@@ -1,6 +1,7 @@
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.Stack;
 import java.util.TreeSet;
@@ -364,6 +365,30 @@ public class Facebook implements Serializable {
 		}
 	}
 	
+	// Function to retrieve integer input. Performs input validation to only allow
+	// int
+	static int getInt(String msg, int lowRange) {
+		boolean isInt = false;
+		Scanner scannerObj =  new Scanner(System.in);
+		int tmpInt = 0;
+		while (!isInt) {
+			try {
+				System.out.println(msg);
+				tmpInt = scannerObj.nextInt();
+				if (tmpInt >= lowRange) 
+					isInt = true;
+				else
+					System.out.println("Please input a number greater than or equal to: " + lowRange);
+			} catch (InputMismatchException ex) {
+				System.out.println("Please Enter integers Only");
+				scannerObj.next();
+			}
+
+		}
+		return tmpInt;
+
+	}
+	
 	// added
 	public GraphViewer display() {
 		Scanner input = new Scanner(System.in);
@@ -384,8 +409,10 @@ public class Facebook implements Serializable {
 			String password = input.nextLine();
 
 			if (user.checkPassword(password)) {
+				
+				int maxDepth = getInt("Enter the maximum number of levels to display",1);
 				System.out.println("Displaying graph for " + user.toString());
-				return new GraphViewer(user);
+				return new GraphViewer(user,maxDepth);
 			} else {
 				System.out.println("Incorrect password.");
 				return null;
