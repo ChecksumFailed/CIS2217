@@ -3,7 +3,10 @@ import java.util.Comparator;
 
 public class twitterFollowersComparator implements Comparator<TwitterUser>, Serializable {
 
-	/**
+	/** Compare Criteria:
+	 * 1. Number of followers(Largest to Smallest)
+	 * 2.  If number of followers are the same, by number of followed(Largest to Smallest)
+	 * 3.  By twitterID(smallest to largest)
 	 * 
 	 */
 	private static final long serialVersionUID = -6512694656375870181L;
