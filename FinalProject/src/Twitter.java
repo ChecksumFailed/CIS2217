@@ -74,43 +74,26 @@ public class Twitter implements Cloneable {
 				if (m.matches()) {
 					int userID = Integer.parseInt(m.group("userid"));
 					int userID2 = Integer.parseInt(m.group("followed"));
-					// System.out.println(userID);
-					// If userid changed, check if user exists in
-					/*
-					if (curUser == null || (curUser.getUserID() != userID)) {
-						curUser = new TwitterUser(userID); // New UserID
-						if ((userIndex = linearSearch( userID)) >= 0)
-							
-							curUser = this.twitterUsers.get(userIndex);
-						else {
-							this.twitterUsers.add(curUser); // add to list
-							//Collections.sort(this.twitterUsers);
-						}
-					}*/
+	
 					curUser = twitterMap.get(userID);
 					if(curUser == null) {
 						curUser = new TwitterUser(userID);
 						twitterMap.put(userID, curUser);
 					}
-					/*
-					// Check if user to follow needs created
-					followedUser = new TwitterUser(userID2);
-					if ((userIndex = linearSearch( userID)) >= 0)
-						
-						followedUser = this.twitterUsers.get(userIndex);
-					else {
-						this.twitterUsers.add(followedUser);
-						//Collections.sort(this.twitterUsers);
-					}
-					*/
+			
 					followedUser = twitterMap.get(userID2);
 					if(followedUser == null) {
 						followedUser = new TwitterUser(userID2);
 						twitterMap.put(userID2,followedUser);
 					}
+										
 					// Follow User
 					if (!curUser.isFollowed(followedUser))
 						curUser.follow(followedUser);
+					
+					//Add Follower
+					if(followedUser.followers.get(curUser.getUserID()) == null)
+						followedUser.followers.put(curUser.getUserID(), curUser);
 					
 					
 

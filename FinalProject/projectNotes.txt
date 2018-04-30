@@ -1,0 +1,24 @@
+Final Project  - Twitter 
+
+Changes from midterm:
+Change ArrayLists to HashMaps.  HashMap.get is O(1), Collection.Contains is O(n)
+
+TwitterUser Class
+1. New List - Followers
+	a.  List of users following user.  
+	b. Populate at flatfile load time
+2. New comparator
+	a. Number of followers (largest to smallest)
+	b. If two users have the same number of followers, sort by the number of people that
+		user is following (largest to smallest)
+	c. If two users have the same number of followers and are following the same
+		number of people, sort by user id (smallest to largest)
+
+Twitter Class:
+1. Sort list with comparator, based on number of followers.  Instead of by id
+2.  Collection<TwitterUser> getFollowing(TwitterUser user)
+	a. Return followers collection from TwitterUser Object
+3. TwitterUser getByPopularity(int x)
+	a. Return nTh user(variable x) of the comparator sorted list
+
+
