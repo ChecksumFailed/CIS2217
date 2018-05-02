@@ -8,18 +8,23 @@ public class Driver {
 	public static void main(String[] args) throws CloneNotSupportedException {
 		Twitter twitterObj = new Twitter();
 		System.out.println("Loading twitter data(Please be patient)...");
-		
-		
+
+		 Long startTime = System.nanoTime(); 
 		try {
+		
 			twitterObj.loadDB();
+			
+	       	        
 		} catch (IOException|RuntimeException e) {
 			Utilities.showError( e.getMessage().toString(),"ERROR!!!");
 			return;
 		}
-		
+		 Long endTime = System.nanoTime();
+	     int elapsedTime = (int) ((endTime - startTime) / 1000000000);
+	     
 		int testUser = 0;
 		
-		System.out.println("Loaded " + twitterObj.getList().size() + " Unique users and their associated followed users from flat file\n" );
+		System.out.println("Loaded " + twitterObj.getList().size() + " Unique users, their associated followed users, and followers from flat file in " + elapsedTime + " seconds\n" );
 		TwitterUser tmpUser = twitterObj.binarySearch(testUser);
 		System.out.println("Testing Clone of User " + testUser + "");
 		TwitterUser cloneUser = tmpUser.clone();
@@ -49,7 +54,7 @@ public class Driver {
 			System.out.println(twitterObj.getNeighborhood(testUser, i));
 		}
 
-
+		
 
 		
 

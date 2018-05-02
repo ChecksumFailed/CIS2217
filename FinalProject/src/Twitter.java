@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -15,7 +16,8 @@ import java.util.Map;
 
 public class Twitter implements Cloneable {
 
-	private ArrayList<TwitterUser> twitterUsers = new ArrayList<TwitterUser>(); // List of twitter accounts and data
+	private ArrayList<TwitterUser> twitterUsers = new ArrayList<TwitterUser>(); // List of twitter accounts and data, sorted
+	private ArrayList<TwitterUser> twitterUsersPop = new ArrayList<TwitterUser>(); // List of twitter accounts and data, sorted by popularity
 	//HashMap<Integer,TwitterUser> twitterUsers = new HashMap<Integer,TwitterUser>(); //Hashmap of twitter users
 	private String dbFile = "social_network.edgelist"; // space delimited text file of twitter data. Can be overridden
 														// when constructor called
@@ -107,10 +109,10 @@ public class Twitter implements Cloneable {
 			}
 			//Add hashmap values to arraylist and sort
 			this.twitterUsers.addAll(twitterMap.values());
-		//	HeapSort.fromList(this.twitterUsers);
-			HeapSort.fromList(this.twitterUsers,new twitterFollowersComparator()); //Sort by number of followers
+			//HeapSort.fromList(this.twitterUsers);
+			//HeapSort.fromList(this.twitterUsers,new twitterFollowersComparator()); //Sort by number of followers
 		
-			//Collections.sort(this.twitterUsers);
+			Collections.sort(this.twitterUsers);
 		} catch (
 
 		IOException e) {
@@ -139,14 +141,14 @@ public class Twitter implements Cloneable {
 	//Recursive function to get all related twitter users, based on followed users.
 	ArrayList<TwitterUser> getNeighborhood(TwitterUser baseUser, ArrayList<TwitterUser> listToReturn,
 			TwitterUser tmpUser, int depth, int maxDepth) throws CloneNotSupportedException {
-		ArrayList<TwitterUser> asdf = tmpUser.getFollowed();
-		
-		for (TwitterUser i : asdf) {
+		//ArrayList<TwitterUser> asdf = new ArrayList<TwitterUser>(tmpUser.getFollowed());
+		//System.out.println(tmpUser + " : " + tmpUser.followed.size() + "\t" + depth + ":" + maxDepth);
+		for (TwitterUser i : tmpUser.getFollowed()) {
 			// Add to list if it does not already exist and is not the initial user we are
 			// making recommendation for
 			if (!listToReturn.contains(i)) {
 				listToReturn.add(i);
-				if (depth <= maxDepth)
+				if (depth < maxDepth)
 					getNeighborhood(baseUser, listToReturn, i, ++depth, maxDepth);
 			}
 			
@@ -193,5 +195,17 @@ public class Twitter implements Cloneable {
 	}
 	
 	//Return followers of user
+	Collection<TwitterUser> getFollowing(TwitterUser user) throws CloneNotSupportedException {
+		return user.getFollowing();
+		
+	}
+	
+	//return xTh twitter user, sorted by popularity
+	
+	TwitterUser getByPopularity(int x) {
+		return this.twitterUsers.get(x);
+		
+	}
+	
 	
 }
