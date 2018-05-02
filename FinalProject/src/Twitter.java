@@ -16,6 +16,7 @@ import java.util.Map;
 public class Twitter implements Cloneable {
 
 	private ArrayList<TwitterUser> twitterUsers = new ArrayList<TwitterUser>(); // List of twitter accounts and data
+	//HashMap<Integer,TwitterUser> twitterUsers = new HashMap<Integer,TwitterUser>(); //Hashmap of twitter users
 	private String dbFile = "social_network.edgelist"; // space delimited text file of twitter data. Can be overridden
 														// when constructor called
 	
@@ -32,6 +33,8 @@ public class Twitter implements Cloneable {
 	ArrayList<TwitterUser> getList() {
 		return (ArrayList<TwitterUser>) this.twitterUsers.clone();
 	}
+	
+	
 	
 	
 	
@@ -104,7 +107,8 @@ public class Twitter implements Cloneable {
 			}
 			//Add hashmap values to arraylist and sort
 			this.twitterUsers.addAll(twitterMap.values());
-			HeapSort.fromList(this.twitterUsers);
+		//	HeapSort.fromList(this.twitterUsers);
+			HeapSort.fromList(this.twitterUsers,new twitterFollowersComparator()); //Sort by number of followers
 		
 			//Collections.sort(this.twitterUsers);
 		} catch (
@@ -187,4 +191,7 @@ public class Twitter implements Cloneable {
 		return -1;
 			
 	}
+	
+	//Return followers of user
+	
 }
