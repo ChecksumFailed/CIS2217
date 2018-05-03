@@ -210,6 +210,27 @@ public class Twitter implements Cloneable {
 			
 	}
 	
+	/* Changes since MidTerm
+		 * TwitterUser: 
+		 *     Converted from ArrayList to Hashmap for followed list.
+		 *     Added new HashMap to store followers. 
+		 *     Used hashmap as get and put operations are O(1)
+		 *     Changed getFollowed method to return a collection instead of arrayList
+		 * 
+		 * twitterFollowerComparator:
+		 * 	New comparator to use with sort operations.  Sort Criteria:
+		 *	    a. Number of followers (largest to smallest)
+				b. If two users have the same number of followers, sort by the number of people that
+					user is following (largest to smallest)
+				c. If two users have the same number of followers and are following the same
+					number of people, sort by user id (smallest to largest)
+					
+		 Twitter:
+		 	Modified to sort list by new comparator
+		 	GetNeighborHood method.  Modified to not use arraylist and simple call user.getFollowed() and iterate
+		 */
+	
+	
 	//Return followers of user
 	Collection<TwitterUser> getFollowing(TwitterUser user) throws CloneNotSupportedException {
 		return user.getFollowing();

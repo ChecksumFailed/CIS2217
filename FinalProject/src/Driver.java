@@ -1,8 +1,24 @@
 import java.io.IOException;
 //
 import java.util.ArrayList;
+import java.util.HashMap;
 ;
-
+/* Final Project
+ * Data Structures Used:
+ * TwitterUser: 
+ *     HashMap<Integer,TwitterUser> followed 
+ *     	Used to store followed users.  Used hashmap as get and put operations are O(1)
+ *     HashMap<Integer,TwitterUser> followers 
+ *     	Used to store followed users.  Used hashmap as get and put operations are O(1)
+ * Twitter:
+ * 	 HashMap<Integer,TwitterUser> twitterMap
+ * 		Used to temporarily store values as they are loaded from file, before populating arraylist with values and sorting.
+ *      Used hashmap due to O(1) get/put complexity
+ *   ArrayList<TwitterUser> twitterUsers
+ *   	Stores all users after data is extracted and normalized from edgelist.   
+ *   	Used arraylist due to O(1) nature of retrieving item by index and the need to have a sorted list
+ * 
+ */
 public class Driver {
 
 	public static void main(String[] args) throws CloneNotSupportedException {
