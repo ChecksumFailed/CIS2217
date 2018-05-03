@@ -16,8 +16,8 @@ import java.util.Map;
 
 public class Twitter implements Cloneable {
 
-	private ArrayList<TwitterUser> twitterUsers = new ArrayList<TwitterUser>(); // List of twitter accounts and data, sorted
-	private ArrayList<TwitterUser> twitterUsersPop = new ArrayList<TwitterUser>(); // List of twitter accounts and data, sorted by popularity
+	ArrayList<TwitterUser> twitterUsers = new ArrayList<TwitterUser>(); // List of twitter accounts and data, sorted
+	
 	//HashMap<Integer,TwitterUser> twitterUsers = new HashMap<Integer,TwitterUser>(); //Hashmap of twitter users
 	private String dbFile = "social_network.edgelist"; // space delimited text file of twitter data. Can be overridden
 														// when constructor called
@@ -97,8 +97,7 @@ public class Twitter implements Cloneable {
 						curUser.follow(followedUser);
 					
 					//Add Follower
-					if(followedUser.followers.get(curUser.getUserID()) == null)
-						followedUser.followers.put(curUser.getUserID(), curUser);
+					followedUser.followers.put(curUser.getUserID(), curUser);
 					
 					
 
@@ -112,7 +111,8 @@ public class Twitter implements Cloneable {
 			//HeapSort.fromList(this.twitterUsers);
 			//HeapSort.fromList(this.twitterUsers,new twitterFollowersComparator()); //Sort by number of followers
 		
-			Collections.sort(this.twitterUsers);
+			//Collections.sort(this.twitterUsers);
+			Collections.sort(this.twitterUsers,new twitterFollowersComparator()); //SOrt by popularity
 		} catch (
 
 		IOException e) {
@@ -127,6 +127,22 @@ public class Twitter implements Cloneable {
 		TwitterUser tmpUser = binarySearch( userID);
 		if (tmpUser == null)
 			throw new RuntimeException("Error: User " + userID + " does not exist");
+		
+		if (tmpUser.getFollowedCount() == 0)
+			throw new RuntimeException(tmpUser.getUserID() + " does not follow anyone");
+
+		ArrayList<TwitterUser> listToReturn = new ArrayList<TwitterUser>();
+
+		listToReturn = getNeighborhood(tmpUser, listToReturn, tmpUser, 0, maxDepth);
+		return listToReturn;
+
+	}
+	
+	//Recursive function to get all related twitter users, based on followed users.
+	ArrayList<TwitterUser> getNeighborhood(TwitterUser tmpUser, int maxDepth) throws RuntimeException, CloneNotSupportedException {
+		
+		if (tmpUser == null)
+			throw new RuntimeException("Error: User " + tmpUser + " does not exist");
 		
 		if (tmpUser.getFollowedCount() == 0)
 			throw new RuntimeException(tmpUser.getUserID() + " does not follow anyone");
